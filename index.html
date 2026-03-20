@@ -29,6 +29,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { background: var(--bg); color: var(--text); font-family: Georgia, serif; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; touch-action: manipulation; cursor: pointer; }
   .screen { display: none; flex-direction: column; align-items: center; width: 100%; min-height: 100dvh; padding: 20px 12px; gap: 12px; cursor: pointer; }
+  #game-screen.active { min-height: unset; }
   .screen.active { display: flex; }
 
   /* TITLE */
@@ -53,8 +54,11 @@
   .sub-label { color: var(--muted); font-size: .8rem; text-align: center; font-style: italic; }
   .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
+
+
+
   /* GAME */
-  #game-screen { padding: 8px 6px; gap: 6px; }
+  #game-screen { padding: 6px 6px 12px; gap: 6px; height: 100dvh; overflow-y: auto; justify-content: flex-start; }
   .game-hdr { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 490px; padding: 0 4px; }
   .ptag { font-size: .78rem; padding: 4px 10px; border-radius: 20px; font-weight: bold; letter-spacing: 1px; }
   .ptag.red { background: rgba(192,57,43,.2); border: 1px solid var(--red); color: #e74c3c; }
@@ -62,7 +66,7 @@
   #turn-label { font-size: .75rem; color: var(--muted); text-align: center; }
 
   /* BOARD */
-  #board-wrap { width: 100%; display: flex; justify-content: center; overflow-x: auto; }
+  #board-wrap { width: 100%; display: flex; justify-content: center; overflow-x: hidden; }
   #board { display: grid; grid-template-columns: repeat(9, var(--cell-w)); gap: var(--gap); background: #0d0a05; border: 2px solid var(--border); border-radius: 6px; padding: var(--gap); position: relative; overflow: hidden; }
   .cell { width: var(--cell-w); height: var(--cell-h); background: #2d2010; border-radius: 3px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; user-select: none; z-index: 1; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
   .cell.sh { background: #261a0c; }
@@ -460,6 +464,35 @@
 
 
 <script>
+
+// ============================================================
+//  AUTO-SCALE BOARD TO FIT ANY SCREEN SIZE
+// ============================================================
+
+
+
+// ============================================================
+//  DYNAMIC CELL SIZING — fits board to screen width naturally
+// ============================================================
+function fitBoardToScreen() {
+  var availW = window.innerWidth - 12;
+  var gap = 2, padding = 4, border = 4;
+  var cellW = Math.floor((availW - (8*gap) - padding - border) / 9);
+  cellW = Math.max(cellW, 30);
+  cellW = Math.min(cellW, 52);
+  var cellH = Math.round(cellW * 36 / 52);
+  document.documentElement.style.setProperty('--cell-w', cellW + 'px');
+  document.documentElement.style.setProperty('--cell-h', cellH + 'px');
+  // Update piece sizes to match new cell size
+  var pw = cellW - 4, ph = cellH - 3;
+  var style = document.getElementById('piece-size-style');
+  if (!style) { style = document.createElement('style'); style.id = 'piece-size-style'; document.head.appendChild(style); }
+  style.textContent = '.piece { width:' + pw + 'px !important; height:' + ph + 'px !important; }';
+}
+window.addEventListener('resize', fitBoardToScreen);
+window.addEventListener('orientationchange', function(){ setTimeout(fitBoardToScreen, 200); });
+document.addEventListener('DOMContentLoaded', fitBoardToScreen);
+
 // © 2026 JMBio032026. All Rights Reserved.
 // Game of the Generals — Digital Adaptation (Salpakan)
 // Unauthorized copying or distribution is strictly prohibited.
@@ -1040,6 +1073,7 @@ function launchGame() {
   document.getElementById('play-again-btn').style.display='none';
   document.getElementById('ai-bar-wrap').classList.remove('show');
   showScreen('game-screen');
+  fitBoardToScreen();
   updHdr(); render();
   setSt('Select a piece to move');
 }
@@ -1131,6 +1165,35 @@ function playSound(type) {
 </script>
 
 <script>
+
+// ============================================================
+//  AUTO-SCALE BOARD TO FIT ANY SCREEN SIZE
+// ============================================================
+
+
+
+// ============================================================
+//  DYNAMIC CELL SIZING — fits board to screen width naturally
+// ============================================================
+function fitBoardToScreen() {
+  var availW = window.innerWidth - 12;
+  var gap = 2, padding = 4, border = 4;
+  var cellW = Math.floor((availW - (8*gap) - padding - border) / 9);
+  cellW = Math.max(cellW, 30);
+  cellW = Math.min(cellW, 52);
+  var cellH = Math.round(cellW * 36 / 52);
+  document.documentElement.style.setProperty('--cell-w', cellW + 'px');
+  document.documentElement.style.setProperty('--cell-h', cellH + 'px');
+  // Update piece sizes to match new cell size
+  var pw = cellW - 4, ph = cellH - 3;
+  var style = document.getElementById('piece-size-style');
+  if (!style) { style = document.createElement('style'); style.id = 'piece-size-style'; document.head.appendChild(style); }
+  style.textContent = '.piece { width:' + pw + 'px !important; height:' + ph + 'px !important; }';
+}
+window.addEventListener('resize', fitBoardToScreen);
+window.addEventListener('orientationchange', function(){ setTimeout(fitBoardToScreen, 200); });
+document.addEventListener('DOMContentLoaded', fitBoardToScreen);
+
 // © 2026 JMBio032026. All Rights Reserved.
 // Game of the Generals — Digital Adaptation (Salpakan)
 // Unauthorized copying or distribution is strictly prohibited.
