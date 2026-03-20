@@ -58,12 +58,14 @@
   #board-scale-wrap {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
     transform-origin: top center;
+    flex-shrink: 0;
   }
-  /* Game screen doesn't clip scaled board */
-  #game-screen { overflow: visible; }
+  /* Game screen must not clip or hide overflow */
+  #game-screen { overflow: visible !important; }
+  #game-screen .btn-row { position: relative; z-index: 10; }
 
   /* GAME */
   #game-screen { padding: 8px 6px; gap: 6px; }
@@ -481,39 +483,42 @@ function autoScale() {
   var board = document.getElementById('board');
   if (!wrap || !board) return;
 
-  // Reset scale first to measure natural board width
+  // Reset first to get natural measurements
   wrap.style.transform = 'scale(1)';
-  wrap.style.marginBottom = '0px';
+  wrap.style.transformOrigin = 'top center';
+  wrap.style.height = 'auto';
+  wrap.style.marginBottom = '0';
 
-  var boardW = board.offsetWidth;   // natural board width in px
-  var boardH = board.offsetHeight;  // natural board height in px
+  var boardW = board.offsetWidth;
+  var boardH = board.offsetHeight;
   var screenW = window.innerWidth;
   var screenH = window.innerHeight;
 
-  // Available width with small side padding
+  // Reserve space for header (~40px), scoreboard (~44px),
+  // status bar (~40px), buttons (~50px), gaps (~40px) = ~214px
+  var reservedH = 214;
   var availW = screenW - 16;
-  var availH = screenH * 0.65; // don't let board take more than 65% of screen height
+  var availH = screenH - reservedH;
 
-  // Calculate scale to fit width, capped so it never exceeds natural size
   var scaleW = availW / boardW;
   var scaleH = availH / boardH;
-  var scale = Math.min(scaleW, scaleH, 1.0); // never scale UP, only down
-  scale = Math.max(scale, 0.4); // never shrink below 40%
+  var scale = Math.min(scaleW, scaleH, 1.0); // never scale UP
+  scale = Math.max(scale, 0.35);             // never too small
 
-  // Apply scale from top-center
+  // Apply scale
   wrap.style.transform = 'scale(' + scale + ')';
   wrap.style.transformOrigin = 'top center';
 
-  // Compensate for the space the scaled board now leaves
-  // (scaled element still occupies original space in flow)
-  var scaledH = boardH * scale;
-  var savedH = boardH - scaledH;
-  wrap.style.marginBottom = '-' + Math.round(savedH) + 'px';
+  // KEY FIX: set the wrapper height to the SCALED height
+  // so elements below always sit correctly underneath
+  var scaledH = Math.round(boardH * scale);
+  wrap.style.height = scaledH + 'px';
+  wrap.style.overflow = 'visible';
 }
 
-// Run on load, screen resize, and orientation change
+// Run on load, resize and orientation change
 window.addEventListener('resize', autoScale);
-window.addEventListener('orientationchange', function(){ setTimeout(autoScale, 200); });
+window.addEventListener('orientationchange', function(){ setTimeout(autoScale, 300); });
 
 // © 2026 JMBio032026. All Rights Reserved.
 // Game of the Generals — Digital Adaptation (Salpakan)
@@ -1195,39 +1200,42 @@ function autoScale() {
   var board = document.getElementById('board');
   if (!wrap || !board) return;
 
-  // Reset scale first to measure natural board width
+  // Reset first to get natural measurements
   wrap.style.transform = 'scale(1)';
-  wrap.style.marginBottom = '0px';
+  wrap.style.transformOrigin = 'top center';
+  wrap.style.height = 'auto';
+  wrap.style.marginBottom = '0';
 
-  var boardW = board.offsetWidth;   // natural board width in px
-  var boardH = board.offsetHeight;  // natural board height in px
+  var boardW = board.offsetWidth;
+  var boardH = board.offsetHeight;
   var screenW = window.innerWidth;
   var screenH = window.innerHeight;
 
-  // Available width with small side padding
+  // Reserve space for header (~40px), scoreboard (~44px),
+  // status bar (~40px), buttons (~50px), gaps (~40px) = ~214px
+  var reservedH = 214;
   var availW = screenW - 16;
-  var availH = screenH * 0.65; // don't let board take more than 65% of screen height
+  var availH = screenH - reservedH;
 
-  // Calculate scale to fit width, capped so it never exceeds natural size
   var scaleW = availW / boardW;
   var scaleH = availH / boardH;
-  var scale = Math.min(scaleW, scaleH, 1.0); // never scale UP, only down
-  scale = Math.max(scale, 0.4); // never shrink below 40%
+  var scale = Math.min(scaleW, scaleH, 1.0); // never scale UP
+  scale = Math.max(scale, 0.35);             // never too small
 
-  // Apply scale from top-center
+  // Apply scale
   wrap.style.transform = 'scale(' + scale + ')';
   wrap.style.transformOrigin = 'top center';
 
-  // Compensate for the space the scaled board now leaves
-  // (scaled element still occupies original space in flow)
-  var scaledH = boardH * scale;
-  var savedH = boardH - scaledH;
-  wrap.style.marginBottom = '-' + Math.round(savedH) + 'px';
+  // KEY FIX: set the wrapper height to the SCALED height
+  // so elements below always sit correctly underneath
+  var scaledH = Math.round(boardH * scale);
+  wrap.style.height = scaledH + 'px';
+  wrap.style.overflow = 'visible';
 }
 
-// Run on load, screen resize, and orientation change
+// Run on load, resize and orientation change
 window.addEventListener('resize', autoScale);
-window.addEventListener('orientationchange', function(){ setTimeout(autoScale, 200); });
+window.addEventListener('orientationchange', function(){ setTimeout(autoScale, 300); });
 
 // © 2026 JMBio032026. All Rights Reserved.
 // Game of the Generals — Digital Adaptation (Salpakan)
