@@ -54,18 +54,7 @@
   .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
 
-  /* AUTO-SCALE WRAPPER */
-  #board-scale-wrap {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    width: 100%;
-    transform-origin: top center;
-    flex-shrink: 0;
-  }
-  /* Game screen must not clip or hide overflow */
-  #game-screen { overflow: visible !important; }
-  #game-screen .btn-row { position: relative; z-index: 10; }
+
 
   /* GAME */
   #game-screen { padding: 8px 6px; gap: 6px; }
@@ -76,7 +65,7 @@
   #turn-label { font-size: .75rem; color: var(--muted); text-align: center; }
 
   /* BOARD */
-  #board-wrap { width: 100%; display: flex; justify-content: center; overflow: visible; }
+  #board-wrap { width: 100%; display: flex; justify-content: center; overflow-x: auto; }
   #board { display: grid; grid-template-columns: repeat(9, var(--cell-w)); gap: var(--gap); background: #0d0a05; border: 2px solid var(--border); border-radius: 6px; padding: var(--gap); position: relative; overflow: hidden; }
   .cell { width: var(--cell-w); height: var(--cell-h); background: #2d2010; border-radius: 3px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; user-select: none; z-index: 1; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
   .cell.sh { background: #261a0c; }
@@ -410,7 +399,7 @@
     <div class="score-box draws"><div class="slabel">Draws</div><div class="sval" id="sc-draw">0</div></div>
     <div class="score-box blue"><div class="slabel">Blue Wins</div><div class="sval" id="sc-blue">0</div></div>
   </div>
-  <div id="board-scale-wrap"><div id="board-wrap"><div id="board"><svg id="board-watermark" width="460" height="280" viewBox="0 0 460 280">
+  <div id="board-wrap"><div id="board"><svg id="board-watermark" width="460" height="280" viewBox="0 0 460 280">
   <!-- LUZON -->
   <path fill="currentColor" d="M30,145 C28,138 26,128 28,120 C30,112 35,108 38,102 C41,96 42,88 40,82 C38,76 33,73 32,67 C31,61 34,55 38,51 C42,47 47,46 51,43 C55,40 57,35 56,29 C55,23 51,19 50,13 C49,7 52,2 57,1 C62,0 67,3 71,7 C75,11 77,17 81,20 C85,23 90,23 94,21 C98,19 100,14 104,12 C108,10 113,11 116,14 C119,17 119,22 121,26 C123,30 127,33 130,37 C133,41 134,46 132,51 C130,56 126,58 124,63 C122,68 123,74 126,78 C129,82 133,83 135,88 C137,93 136,99 133,103 C130,107 126,108 123,112 C120,116 119,121 120,127 C121,133 124,137 124,143 C124,149 121,154 118,158 C115,162 111,164 108,168 C105,172 104,177 105,183 C106,189 109,193 109,199 C109,205 106,210 102,213 C98,216 93,216 89,214 C85,212 83,208 79,206 C75,204 70,205 66,203 C62,201 60,196 61,191 C62,186 66,183 67,178 C68,173 66,167 63,163 C60,159 56,158 53,154 C50,150 50,144 50,138 C50,132 52,126 51,120 C50,114 46,110 43,105 C40,100 40,93 43,88 C46,83 51,81 53,76 C55,71 53,65 50,61 C47,57 43,56 41,52 C39,48 40,42 43,39 C46,36 50,36 53,38 C56,40 57,44 60,46 C63,48 67,47 69,45 C71,43 71,39 70,36 C69,33 67,31 67,28 C67,25 69,22 72,21 C75,20 78,22 80,25 C82,28 82,32 83,35 C84,38 86,41 89,42 C92,43 95,41 97,39 C99,37 99,33 98,30 C97,27 95,25 95,22 C95,19 97,16 100,15 C103,14 106,16 108,19 C110,22 110,26 111,30 C112,34 114,37 117,39 C120,41 124,41 127,40 C130,39 132,36 133,33 C134,30 133,26 134,23 C135,20 138,18 141,18 C144,18 146,21 147,24 C148,27 147,31 147,35 C147,39 148,43 151,45 C154,47 157,46 160,45 C163,44 165,41 166,38 C167,35 166,31 167,28 C168,25 171,23 174,23 C177,23 179,26 180,29 C181,32 180,36 179,39 C178,42 176,45 176,48 C176,51 178,54 181,55 C184,56 187,54 189,52 C191,50 191,46 192,43 C193,40 195,38 198,38 C201,38 203,41 203,44 C203,47 201,50 200,53 C199,56 199,60 200,63 C201,66 203,68 203,71 C203,74 201,77 199,79 C197,81 194,81 192,83 C190,85 190,89 192,91 C194,93 197,92 199,94 C201,96 201,100 199,102 C197,104 194,104 192,106 C190,108 190,112 192,114 C194,116 197,116 199,118 C201,120 201,124 199,126 C197,128 194,128 192,130 C190,132 190,136 192,138 C194,140 197,140 199,142 C201,144 201,148 199,150 C197,152 194,152 192,154 C190,156 190,160 192,162 C194,164 197,163 198,166 C199,169 197,172 195,174 C193,176 190,176 188,178 C186,180 186,184 188,186 C190,188 193,187 195,189 C197,191 197,195 195,197 C193,199 190,199 188,201 C186,203 186,207 188,209 C190,211 193,210 194,212 C195,215 193,218 191,220 C189,222 186,222 184,221 C182,220 181,218 179,217 C177,216 174,216 172,217 C170,218 169,220 167,221 C165,222 162,222 160,220 C158,218 158,214 157,211 C156,208 154,205 151,204 C148,203 145,204 143,203 C141,202 140,199 140,196 C140,193 141,190 140,187 C139,184 137,182 135,180 C133,178 130,177 128,175 C126,173 125,170 126,167 C127,164 130,163 131,160 C132,157 131,153 129,151 C127,149 124,149 122,147 C120,145 119,142 119,139 C119,136 120,133 120,130 C120,127 119,124 117,122 C115,120 112,120 110,118 C108,116 107,113 108,110 C109,107 112,106 113,103 C114,100 113,96 111,94 C109,92 106,92 104,90 C102,88 102,84 104,82 C106,80 109,80 111,78 C113,76 113,72 111,70 C109,68 106,68 104,66 C102,64 102,60 104,58 C106,56 109,56 111,54 C113,52 113,48 111,46 C109,44 106,44 104,42 C102,40 102,36 104,34 C106,32 109,32 111,30 C113,28 113,24 111,22 C109,20 106,20 104,18 C102,16 102,12 104,10 C106,8 109,8 110,6 C111,4 110,1 108,0 C106,-1 103,0 101,2 C99,4 98,7 96,9 C94,11 91,12 89,11 C87,10 86,7 84,6 C82,5 79,6 78,8 C77,10 78,13 77,16 C76,19 74,21 71,22 C68,23 65,21 63,19 C61,17 61,13 59,11 C57,9 54,9 52,10 C50,11 49,14 49,17 C49,20 50,23 49,26 C48,29 46,31 43,32 C40,33 37,31 35,29 C33,27 32,24 30,22 C28,20 25,19 23,20 C21,21 20,24 20,27 C20,30 21,33 21,36 C21,39 20,42 18,44 C16,46 13,46 11,48 C9,50 9,54 11,56 C13,58 16,57 18,59 C20,61 20,65 18,67 C16,69 13,68 11,70 C9,72 9,76 11,78 C13,80 16,79 18,81 C20,83 20,87 18,89 C16,91 13,90 12,93 C11,96 13,99 16,101 C19,103 22,102 24,104 C26,106 26,110 24,112 C22,114 19,113 17,115 C15,117 15,121 17,123 C19,125 22,124 24,126 C26,128 26,132 24,134 C22,136 19,135 17,137 C15,139 15,143 17,145 C19,147 22,146 24,148 C26,150 26,154 24,156 C22,158 19,157 17,159 C15,161 15,165 17,167 C19,169 22,168 24,170 C26,172 26,176 24,178 C22,180 19,179 17,181 C15,183 15,187 17,189 C19,191 22,190 24,192 C26,194 26,198 24,200 C22,202 19,201 17,203 C15,205 15,209 17,211 C19,213 22,212 24,214 C26,216 26,220 24,222 C22,224 19,223 17,224 C15,225 14,228 15,231 C16,234 19,235 22,236 L30,236 C33,235 35,232 37,230 C39,228 42,227 44,228 C46,229 47,232 49,233 C51,234 54,234 56,232 C58,230 58,226 57,223 C56,220 54,218 53,215 C52,212 52,208 54,206 C56,204 59,204 61,202 C63,200 63,196 61,194 C59,192 56,192 54,190 C52,188 52,184 54,182 C56,180 59,180 61,178 C63,176 63,172 61,170 C59,168 56,168 54,166 C52,164 52,160 54,158 C56,156 59,156 61,154 C63,152 63,148 61,146 C59,144 56,144 54,142 C52,140 52,136 54,134 C56,132 59,132 61,130 C63,128 63,124 61,122 C59,120 56,120 54,118 C52,116 52,112 54,110 C56,108 59,108 61,106 C63,104 63,100 61,98 C59,96 56,96 54,94 C52,92 52,88 54,86 C56,84 59,84 61,82 C63,80 63,76 61,74 C59,72 56,72 54,70 C52,68 52,64 54,62 C56,60 59,60 61,58 C63,56 63,52 61,50 C59,48 56,48 54,46 C52,44 52,40 54,38 C56,36 59,36 61,34 C63,32 63,28 61,26 C59,24 56,24 54,22 C52,20 52,16 54,14 C56,12 59,12 61,10 C63,8 63,4 61,2 L57,0 C54,0 51,2 49,5 C47,8 47,12 46,16 C45,20 43,23 40,25 C37,27 33,27 30,25 C27,23 26,19 25,15 C24,11 24,6 22,3 C20,0 17,-1 14,0 C11,1 10,4 9,7 C8,10 8,14 9,17 C10,20 12,22 12,25 C12,28 10,30 8,32 C6,34 3,34 2,37 C1,40 3,43 6,44 C9,45 12,44 14,46 C16,48 16,52 14,54 C12,56 9,55 7,57 C5,59 5,63 7,65 C9,67 12,66 14,68 C16,70 16,74 14,76 C12,78 9,77 7,79 C5,81 5,85 7,87 C9,89 12,88 14,90 C16,92 16,96 14,98 C12,100 9,99 7,101 C5,103 5,107 7,109 C9,111 12,110 14,112 C16,114 16,118 14,120 C12,122 9,121 7,123 C5,125 5,129 7,131 C9,133 12,132 14,134 C16,136 16,140 14,142 C12,144 9,143 7,145 Z"/>
   <!-- PALAWAN diagonal strip -->
@@ -437,7 +426,7 @@
   <ellipse fill="currentColor" cx="405" cy="262" rx="7" ry="4" transform="rotate(-25,405,262)"/>
   <ellipse fill="currentColor" cx="422" cy="268" rx="6" ry="3" transform="rotate(-25,422,268)"/>
   <ellipse fill="currentColor" cx="440" cy="273" rx="5" ry="3" transform="rotate(-25,440,273)"/>
-</svg></div></div></div></div>
+</svg></div></div>
   <div id="ai-bar-wrap">
     <div id="ai-label">🤖 AI is thinking…</div>
     <div id="ai-bar-bg"><div id="ai-bar"></div></div>
@@ -478,47 +467,41 @@
 // ============================================================
 //  AUTO-SCALE BOARD TO FIT ANY SCREEN SIZE
 // ============================================================
-function autoScale() {
-  var wrap = document.getElementById('board-scale-wrap');
-  var board = document.getElementById('board');
-  if (!wrap || !board) return;
 
-  // Reset first to get natural measurements
-  wrap.style.transform = 'scale(1)';
-  wrap.style.transformOrigin = 'top center';
-  wrap.style.height = 'auto';
-  wrap.style.marginBottom = '0';
 
-  var boardW = board.offsetWidth;
-  var boardH = board.offsetHeight;
-  var screenW = window.innerWidth;
-  var screenH = window.innerHeight;
 
-  // Reserve space for header (~40px), scoreboard (~44px),
-  // status bar (~40px), buttons (~50px), gaps (~40px) = ~214px
-  var reservedH = 214;
-  var availW = screenW - 16;
-  var availH = screenH - reservedH;
+// ============================================================
+//  DYNAMIC CELL SIZING — fits board to screen width naturally
+// ============================================================
+function fitBoardToScreen() {
+  var availW = Math.min(window.innerWidth - 12, 520); // max 520px, 6px side padding
+  var gap = 2;
+  var padding = 4;  // 2px each side
+  var border = 4;   // 2px each side
+  // 9 cells + 8 gaps + padding + border
+  var cellW = Math.floor((availW - (8 * gap) - padding - border) / 9);
+  cellW = Math.max(cellW, 34); // minimum cell width
+  cellW = Math.min(cellW, 52); // maximum cell width (natural size)
+  // Keep aspect ratio 52:36 = 13:9
+  var cellH = Math.round(cellW * 36 / 52);
 
-  var scaleW = availW / boardW;
-  var scaleH = availH / boardH;
-  var scale = Math.min(scaleW, scaleH, 1.0); // never scale UP
-  scale = Math.max(scale, 0.35);             // never too small
+  // Apply to CSS variables
+  document.documentElement.style.setProperty('--cell-w', cellW + 'px');
+  document.documentElement.style.setProperty('--cell-h', cellH + 'px');
 
-  // Apply scale
-  wrap.style.transform = 'scale(' + scale + ')';
-  wrap.style.transformOrigin = 'top center';
-
-  // KEY FIX: set the wrapper height to the SCALED height
-  // so elements below always sit correctly underneath
-  var scaledH = Math.round(boardH * scale);
-  wrap.style.height = scaledH + 'px';
-  wrap.style.overflow = 'visible';
+  // Scale piece to fit cell
+  var pieceW = cellW - 4;
+  var pieceH = cellH - 3;
+  var pieceEls = document.querySelectorAll('.piece');
+  for (var i = 0; i < pieceEls.length; i++) {
+    pieceEls[i].style.width = pieceW + 'px';
+    pieceEls[i].style.height = pieceH + 'px';
+  }
 }
 
-// Run on load, resize and orientation change
-window.addEventListener('resize', autoScale);
-window.addEventListener('orientationchange', function(){ setTimeout(autoScale, 300); });
+window.addEventListener('resize', fitBoardToScreen);
+window.addEventListener('orientationchange', function(){ setTimeout(fitBoardToScreen, 200); });
+document.addEventListener('DOMContentLoaded', fitBoardToScreen);
 
 // © 2026 JMBio032026. All Rights Reserved.
 // Game of the Generals — Digital Adaptation (Salpakan)
@@ -1100,6 +1083,7 @@ function launchGame() {
   document.getElementById('play-again-btn').style.display='none';
   document.getElementById('ai-bar-wrap').classList.remove('show');
   showScreen('game-screen');
+  fitBoardToScreen();
   updHdr(); render();
   setSt('Select a piece to move');
 }
@@ -1107,7 +1091,7 @@ function launchGame() {
 // ============================================================
 //  HELPERS
 // ============================================================
-function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');window.scrollTo(0,0);if(id==='game-screen'){setTimeout(autoScale,50);}}
+function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
 function startGame(m){
   mode=m;
   buildMiniBoardAll();
@@ -1195,47 +1179,41 @@ function playSound(type) {
 // ============================================================
 //  AUTO-SCALE BOARD TO FIT ANY SCREEN SIZE
 // ============================================================
-function autoScale() {
-  var wrap = document.getElementById('board-scale-wrap');
-  var board = document.getElementById('board');
-  if (!wrap || !board) return;
 
-  // Reset first to get natural measurements
-  wrap.style.transform = 'scale(1)';
-  wrap.style.transformOrigin = 'top center';
-  wrap.style.height = 'auto';
-  wrap.style.marginBottom = '0';
 
-  var boardW = board.offsetWidth;
-  var boardH = board.offsetHeight;
-  var screenW = window.innerWidth;
-  var screenH = window.innerHeight;
 
-  // Reserve space for header (~40px), scoreboard (~44px),
-  // status bar (~40px), buttons (~50px), gaps (~40px) = ~214px
-  var reservedH = 214;
-  var availW = screenW - 16;
-  var availH = screenH - reservedH;
+// ============================================================
+//  DYNAMIC CELL SIZING — fits board to screen width naturally
+// ============================================================
+function fitBoardToScreen() {
+  var availW = Math.min(window.innerWidth - 12, 520); // max 520px, 6px side padding
+  var gap = 2;
+  var padding = 4;  // 2px each side
+  var border = 4;   // 2px each side
+  // 9 cells + 8 gaps + padding + border
+  var cellW = Math.floor((availW - (8 * gap) - padding - border) / 9);
+  cellW = Math.max(cellW, 34); // minimum cell width
+  cellW = Math.min(cellW, 52); // maximum cell width (natural size)
+  // Keep aspect ratio 52:36 = 13:9
+  var cellH = Math.round(cellW * 36 / 52);
 
-  var scaleW = availW / boardW;
-  var scaleH = availH / boardH;
-  var scale = Math.min(scaleW, scaleH, 1.0); // never scale UP
-  scale = Math.max(scale, 0.35);             // never too small
+  // Apply to CSS variables
+  document.documentElement.style.setProperty('--cell-w', cellW + 'px');
+  document.documentElement.style.setProperty('--cell-h', cellH + 'px');
 
-  // Apply scale
-  wrap.style.transform = 'scale(' + scale + ')';
-  wrap.style.transformOrigin = 'top center';
-
-  // KEY FIX: set the wrapper height to the SCALED height
-  // so elements below always sit correctly underneath
-  var scaledH = Math.round(boardH * scale);
-  wrap.style.height = scaledH + 'px';
-  wrap.style.overflow = 'visible';
+  // Scale piece to fit cell
+  var pieceW = cellW - 4;
+  var pieceH = cellH - 3;
+  var pieceEls = document.querySelectorAll('.piece');
+  for (var i = 0; i < pieceEls.length; i++) {
+    pieceEls[i].style.width = pieceW + 'px';
+    pieceEls[i].style.height = pieceH + 'px';
+  }
 }
 
-// Run on load, resize and orientation change
-window.addEventListener('resize', autoScale);
-window.addEventListener('orientationchange', function(){ setTimeout(autoScale, 300); });
+window.addEventListener('resize', fitBoardToScreen);
+window.addEventListener('orientationchange', function(){ setTimeout(fitBoardToScreen, 200); });
+document.addEventListener('DOMContentLoaded', fitBoardToScreen);
 
 // © 2026 JMBio032026. All Rights Reserved.
 // Game of the Generals — Digital Adaptation (Salpakan)
