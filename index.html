@@ -53,9 +53,6 @@
   .sub-label { color: var(--muted); font-size: .8rem; text-align: center; font-style: italic; }
   .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
-
-
-
   /* GAME */
   #game-screen { padding: 8px 6px; gap: 6px; }
   .game-hdr { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 490px; padding: 0 4px; }
@@ -463,46 +460,6 @@
 
 
 <script>
-
-// ============================================================
-//  AUTO-SCALE BOARD TO FIT ANY SCREEN SIZE
-// ============================================================
-
-
-
-// ============================================================
-//  DYNAMIC CELL SIZING — fits board to screen width naturally
-// ============================================================
-function fitBoardToScreen() {
-  var availW = Math.min(window.innerWidth - 12, 520); // max 520px, 6px side padding
-  var gap = 2;
-  var padding = 4;  // 2px each side
-  var border = 4;   // 2px each side
-  // 9 cells + 8 gaps + padding + border
-  var cellW = Math.floor((availW - (8 * gap) - padding - border) / 9);
-  cellW = Math.max(cellW, 34); // minimum cell width
-  cellW = Math.min(cellW, 52); // maximum cell width (natural size)
-  // Keep aspect ratio 52:36 = 13:9
-  var cellH = Math.round(cellW * 36 / 52);
-
-  // Apply to CSS variables
-  document.documentElement.style.setProperty('--cell-w', cellW + 'px');
-  document.documentElement.style.setProperty('--cell-h', cellH + 'px');
-
-  // Scale piece to fit cell
-  var pieceW = cellW - 4;
-  var pieceH = cellH - 3;
-  var pieceEls = document.querySelectorAll('.piece');
-  for (var i = 0; i < pieceEls.length; i++) {
-    pieceEls[i].style.width = pieceW + 'px';
-    pieceEls[i].style.height = pieceH + 'px';
-  }
-}
-
-window.addEventListener('resize', fitBoardToScreen);
-window.addEventListener('orientationchange', function(){ setTimeout(fitBoardToScreen, 200); });
-document.addEventListener('DOMContentLoaded', fitBoardToScreen);
-
 // © 2026 JMBio032026. All Rights Reserved.
 // Game of the Generals — Digital Adaptation (Salpakan)
 // Unauthorized copying or distribution is strictly prohibited.
@@ -1083,7 +1040,6 @@ function launchGame() {
   document.getElementById('play-again-btn').style.display='none';
   document.getElementById('ai-bar-wrap').classList.remove('show');
   showScreen('game-screen');
-  fitBoardToScreen();
   updHdr(); render();
   setSt('Select a piece to move');
 }
@@ -1175,46 +1131,6 @@ function playSound(type) {
 </script>
 
 <script>
-
-// ============================================================
-//  AUTO-SCALE BOARD TO FIT ANY SCREEN SIZE
-// ============================================================
-
-
-
-// ============================================================
-//  DYNAMIC CELL SIZING — fits board to screen width naturally
-// ============================================================
-function fitBoardToScreen() {
-  var availW = Math.min(window.innerWidth - 12, 520); // max 520px, 6px side padding
-  var gap = 2;
-  var padding = 4;  // 2px each side
-  var border = 4;   // 2px each side
-  // 9 cells + 8 gaps + padding + border
-  var cellW = Math.floor((availW - (8 * gap) - padding - border) / 9);
-  cellW = Math.max(cellW, 34); // minimum cell width
-  cellW = Math.min(cellW, 52); // maximum cell width (natural size)
-  // Keep aspect ratio 52:36 = 13:9
-  var cellH = Math.round(cellW * 36 / 52);
-
-  // Apply to CSS variables
-  document.documentElement.style.setProperty('--cell-w', cellW + 'px');
-  document.documentElement.style.setProperty('--cell-h', cellH + 'px');
-
-  // Scale piece to fit cell
-  var pieceW = cellW - 4;
-  var pieceH = cellH - 3;
-  var pieceEls = document.querySelectorAll('.piece');
-  for (var i = 0; i < pieceEls.length; i++) {
-    pieceEls[i].style.width = pieceW + 'px';
-    pieceEls[i].style.height = pieceH + 'px';
-  }
-}
-
-window.addEventListener('resize', fitBoardToScreen);
-window.addEventListener('orientationchange', function(){ setTimeout(fitBoardToScreen, 200); });
-document.addEventListener('DOMContentLoaded', fitBoardToScreen);
-
 // © 2026 JMBio032026. All Rights Reserved.
 // Game of the Generals — Digital Adaptation (Salpakan)
 // Unauthorized copying or distribution is strictly prohibited.
