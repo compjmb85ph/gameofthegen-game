@@ -1,0 +1,1262 @@
+
+<!-- ============================================================
+     © 2026 JMBio032026. All Rights Reserved.
+     Game of the Generals — Digital Adaptation (Salpakan)
+     Unauthorized copying, modification, or distribution
+     of this software is strictly prohibited.
+============================================================ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="application-name" content="Salpakan">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Salpakan">
+<meta name="theme-color" content="#1a1208">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22Game%20of%20the%20Generals%22%2C%22short_name%22%3A%22Salpakan%22%2C%22description%22%3A%22Filipino%20strategy%20board%20game%22%2C%22start_url%22%3A%22.%2Fgame-of-generals-mobile.html%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%231a1208%22%2C%22theme_color%22%3A%22%231a1208%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%253D%2527http%253A%2F%2Fwww.w3.org%2F2000%2Fsvg%2527%2520viewBox%253D%25270%25200%2520100%2520100%2527%253E%253Crect%2520width%253D%2527100%2527%2520height%253D%2527100%2527%2520fill%253D%2527%25231a1208%2527%2F%253E%253Ctext%2520y%253D%2527.9em%2527%2520font-size%253D%252780%2527%253E%25F0%259F%258E%2596%253C%2F%2524text%253E%253C%2F%2524svg%253E%22%2C%22sizes%22%3A%22any%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Game of the Generals Mobile</title>
+<style>
+  :root {
+    --bg: #1a1208; --surface: #2a1f0e; --border: #7a5c2e;
+    --gold: #d4a843; --gold-light: #f0c870;
+    --red: #c0392b; --blue-light: #2980b9;
+    --text: #f0e6c8; --muted: #a09070;
+    --cell-w: 52px; --cell-h: 36px; --gap: 2px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--text); font-family: Georgia, serif; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; touch-action: manipulation; cursor: pointer; }
+  .screen { display: none; flex-direction: column; align-items: center; width: 100%; min-height: 100dvh; padding: 20px 12px; gap: 12px; cursor: pointer; }
+  .screen.active { display: flex; }
+
+  /* TITLE */
+  #title-screen { justify-content: center; gap: 18px; background: radial-gradient(ellipse at 50% 30%, #3d2a0a, #1a1208 70%); }
+  .logo h1 { font-size: 2rem; color: var(--gold); text-shadow: 0 0 20px rgba(212,168,67,.5); letter-spacing: 2px; text-align: center; }
+  .logo p { color: var(--muted); font-size: .85rem; text-align: center; font-style: italic; margin-top: 4px; }
+  .stars { color: var(--gold); font-size: 1.4rem; letter-spacing: 4px; text-align: center; }
+  .divider { width: 60px; height: 2px; background: var(--border); border-radius: 2px; }
+  .mode-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; cursor: pointer; width: 100%; max-width: 320px; -webkit-tap-highlight-color: rgba(212,168,67,0.2); touch-action: manipulation; text-align: left; font-family: Georgia, serif; }
+  .mode-card:active { border-color: var(--gold); background: #3a2a14; }
+  .mode-card h3 { color: var(--gold-light); font-size: 1rem; margin-bottom: 4px; }
+  .mode-card p { color: var(--muted); font-size: .8rem; line-height: 1.4; }
+  .btn { background: linear-gradient(135deg, var(--gold), #b8882a); color: #1a1208; border: none; padding: 14px 36px; border-radius: 8px; font-size: 1rem; font-weight: bold; font-family: Georgia, serif; cursor: pointer; min-height: 48px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  .btn:active { opacity: .85; }
+  .btn-sec { background: transparent; color: var(--gold); border: 1px solid var(--border); padding: 10px 24px; font-size: .9rem; border-radius: 8px; font-family: Georgia, serif; cursor: pointer; min-height: 44px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+  /* SETUP */
+  #setup-screen h2 { color: var(--gold); font-size: 1.3rem; text-align: center; margin-top: 8px; }
+  .info-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; width: 100%; max-width: 380px; font-size: .82rem; color: var(--muted); line-height: 1.6; }
+  .info-box strong { color: var(--gold-light); }
+  #setup-wrap { width: 100%; overflow-x: auto; display: flex; justify-content: center; }
+  .sub-label { color: var(--muted); font-size: .8rem; text-align: center; font-style: italic; }
+  .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+
+  /* AUTO-SCALE WRAPPER */
+  #board-scale-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    transform-origin: top center;
+  }
+  /* Game screen doesn't clip scaled board */
+  #game-screen { overflow: visible; }
+
+  /* GAME */
+  #game-screen { padding: 8px 6px; gap: 6px; }
+  .game-hdr { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 490px; padding: 0 4px; }
+  .ptag { font-size: .78rem; padding: 4px 10px; border-radius: 20px; font-weight: bold; letter-spacing: 1px; }
+  .ptag.red { background: rgba(192,57,43,.2); border: 1px solid var(--red); color: #e74c3c; }
+  .ptag.blue { background: rgba(26,82,118,.2); border: 1px solid var(--blue-light); color: var(--blue-light); }
+  #turn-label { font-size: .75rem; color: var(--muted); text-align: center; }
+
+  /* BOARD */
+  #board-wrap { width: 100%; display: flex; justify-content: center; overflow: visible; }
+  #board { display: grid; grid-template-columns: repeat(9, var(--cell-w)); gap: var(--gap); background: #0d0a05; border: 2px solid var(--border); border-radius: 6px; padding: var(--gap); position: relative; overflow: hidden; }
+  .cell { width: var(--cell-w); height: var(--cell-h); background: #2d2010; border-radius: 3px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; user-select: none; z-index: 1; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .cell.sh { background: #261a0c; }
+  .cell.bz { background: #0d1a28; } .cell.bz.sh { background: #0a1520; }
+  .cell.rz { background: #1a0d0d; } .cell.rz.sh { background: #150a0a; }
+  .cell.mz { background: #1a1a0d; } .cell.mz.sh { background: #141408; }
+  .cell.sel { box-shadow: 0 0 0 2px var(--gold); background: #4a3820 !important; z-index: 2; }
+  .cell.vm::after { content: ''; position: absolute; width: 12px; height: 12px; background: rgba(30,132,73,.65); border-radius: 50%; pointer-events: none; z-index: 1; }
+  .cell.vc { background: #3a1010 !important; } .cell.vc::after { background: rgba(192,57,43,.55); }
+
+  /* PIECES — Style B: Elegant Minimal */
+  .piece {
+    width: 50px; height: 33px; border-radius: 4px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    border: 1px solid; overflow: hidden;
+    font-weight: bold; pointer-events: none;
+    position: relative; gap: 1px; padding: 2px 3px;
+  }
+  /* gold top accent bar */
+  .piece::before {
+    content: ''; position: absolute; top: 0; left: 15%; right: 15%;
+    height: 2px; border-radius: 0 0 2px 2px;
+    background: linear-gradient(90deg, #d4a843, #f0c870, #d4a843);
+  }
+  .rp { background: #0f0505; border-color: #7a1818; color: #ffccc0; }
+  .bp { background: #05050f; border-color: #183060; color: #b0d4f0; }
+  .hp { background: #0f0f08 !important; border-color: #3a3020 !important; }
+  .hp::before { background: #3a3020; }
+  /* star grid */
+  .piece .stars { display: flex; flex-direction: column; align-items: center; gap: 0px; }
+  .piece .star-row { display: flex; gap: 1px; align-items: center; justify-content: center; line-height: 1; }
+  .piece .s { font-size: 8px; line-height: 1; }
+  /* rank text for non-star pieces */
+  .piece .rs { font-size: 9px; line-height: 1; letter-spacing: .5px; white-space: nowrap; }
+  .piece .rn { font-size: 5.5px; letter-spacing: 1px; text-transform: uppercase; opacity: .65; white-space: nowrap; margin-top: 1px; }
+  /* hidden */
+  .hp .stars, .hp .rs, .hp .rn { display: none; }
+  .hp::after { content: '?'; font-size: .95rem; color: #6a5830; }
+  /* spy icon */
+  .spy-icon { width: 20px; height: 20px; color: rgba(255,255,255,0.9); flex-shrink: 0; }
+
+  /* STATUS */
+  #status { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; text-align: center; font-size: .82rem; color: var(--text); width: 100%; max-width: 490px; min-height: 36px; }
+  #status.win { color: var(--gold); font-weight: bold; font-size: .95rem; }
+
+  /* AI COUNTDOWN */
+  #ai-bar-wrap { width: 100%; max-width: 490px; display: none; }
+  #ai-bar-wrap.show { display: block; }
+  #ai-label { color: var(--muted); font-size: .78rem; text-align: center; margin-bottom: 4px; font-style: italic; }
+  #ai-bar-bg { background: #1a1208; border: 1px solid var(--border); border-radius: 6px; height: 8px; overflow: hidden; }
+  #ai-bar { height: 100%; width: 100%; background: linear-gradient(90deg, var(--gold), #e0b840); border-radius: 6px; transition: width 1s linear; }
+
+  /* SCOREBOARD */
+  #scoreboard { display: flex; gap: 10px; justify-content: center; align-items: center; width: 100%; max-width: 490px; padding: 0 4px; }
+  .score-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 4px 14px; text-align: center; flex: 1; }
+  .score-box .slabel { font-size: .62rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+  .score-box .sval { font-size: 1.2rem; font-weight: bold; line-height: 1.2; }
+  .score-box.red .sval { color: #e74c3c; }
+  .score-box.blue .sval { color: var(--blue-light); }
+  .score-box.draws .sval { color: var(--gold); }
+
+  /* BATTLE POPUP */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 99; display: none; }
+  .overlay.show { display: block; }
+  #battle-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: #1a1208; border: 2px solid var(--gold); border-radius: 14px; padding: 22px 28px; text-align: center; z-index: 100; min-width: 240px; box-shadow: 0 0 40px rgba(212,168,67,.3); display: none; }
+  #battle-popup.show { display: block; }
+  #battle-popup h3 { color: var(--gold); font-size: 1.1rem; margin-bottom: 10px; }
+  .bvs { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 8px 0; }
+  .bps { padding: 8px 12px; border-radius: 8px; font-size: .82rem; font-weight: bold; min-width: 85px; text-align: center; line-height: 1.4; }
+  .bps.red { background: rgba(192,57,43,.2); border: 1px solid var(--red); color: #e74c3c; }
+  .bps.blue { background: rgba(26,82,118,.2); border: 1px solid var(--blue-light); color: var(--blue-light); }
+  #bp-result { font-size: 1rem; font-weight: bold; margin: 8px 0 4px; }
+  #bp-result.rw { color: #e74c3c; } #bp-result.bw { color: var(--blue-light); } #bp-result.dr { color: var(--muted); }
+  #bp-sub { font-size: .78rem; color: var(--muted); }
+  #bp-dismiss { font-size: .7rem; color: var(--border); margin-top: 10px; font-style: italic; }
+  #battle-popup { cursor: pointer; }
+
+  /* HOWTO */
+  #howto-screen h2 { color: var(--gold); font-size: 1.3rem; text-align: center; margin-top: 8px; }
+  .rc { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; width: 100%; max-width: 360px; }
+  .rc h3 { color: var(--gold-light); font-size: .9rem; margin-bottom: 6px; }
+  .rc p, .rc li { color: var(--muted); font-size: .8rem; line-height: 1.6; }
+  .rc ul { padding-left: 16px; }
+  .rt { width: 100%; border-collapse: collapse; font-size: .75rem; }
+  .rt th { color: var(--gold); padding: 4px 6px; text-align: left; border-bottom: 1px solid var(--border); }
+  .rt td { padding: 3px 6px; color: var(--muted); border-bottom: 1px solid #2a2010; }
+  .rt tr:last-child td { border-bottom: none; }
+  .mini { background: var(--surface); border: 1px solid var(--border); color: var(--muted); border-radius: 8px; padding: 8px 14px; font-size: .78rem; cursor: pointer; font-family: Georgia, serif; min-height: 44px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+
+
+  /* WATERMARK */
+  #board-watermark {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.13;
+    width: 460px;
+    height: 280px;
+  }
+  body.t-night #board-watermark { opacity: 0.18; }
+  body.t-bay   #board-watermark { opacity: 0.12; }
+
+
+  /* HANDOVER SCREEN */
+  #handover-screen {
+    position: fixed; inset: 0; z-index: 200;
+    display: none;
+    flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 20px; padding: 40px 20px;
+  }
+  #handover-screen.show {
+    display: flex;
+  }
+  #handover-screen.red-turn  { background: #1a0505; }
+  #handover-screen.blue-turn { background: #05050f; }
+  .ho-icon { font-size: 3rem; }
+  .ho-title { font-size: 1.6rem; font-weight: bold; letter-spacing: 2px; text-align: center; }
+  .ho-title.red  { color: #e74c3c; }
+  .ho-title.blue { color: #2980b9; }
+  .ho-sub { font-size: .95rem; color: var(--muted); text-align: center; font-style: italic; max-width: 320px; line-height: 1.6; }
+  .ho-btn { background: linear-gradient(135deg, var(--gold), #b8882a); color: #1a1208; border: none; padding: 18px 48px; border-radius: 10px; font-size: 1.1rem; font-weight: bold; font-family: Georgia, serif; cursor: pointer; letter-spacing: 1px; margin-top: 10px; }
+  .ho-btn:active { opacity: .85; }
+  .ho-shield { font-size: 5rem; opacity: .15; position: absolute; }
+
+
+  /* CONFIRM MODAL */
+  #confirm-modal {
+    position: fixed; inset: 0; z-index: 300;
+    display: none;
+    align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.75);
+  }
+  #confirm-modal.show { display: flex; }
+  .confirm-box {
+    background: #1a1208; border: 2px solid var(--gold);
+    border-radius: 14px; padding: 28px 32px; text-align: center;
+    max-width: 300px; width: 90%;
+  }
+  .confirm-box p { color: var(--text); font-size: .95rem; margin-bottom: 20px; line-height: 1.5; }
+  .confirm-btns { display: flex; gap: 12px; justify-content: center; }
+  .confirm-yes { background: linear-gradient(135deg, var(--gold), #b8882a); color: #1a1208; border: none; padding: 10px 28px; border-radius: 8px; font-size: .9rem; font-weight: bold; font-family: Georgia, serif; cursor: pointer; }
+  .confirm-no  { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 10px 28px; border-radius: 8px; font-size: .9rem; font-family: Georgia, serif; cursor: pointer; }
+
+  /* THEMES */
+  /* -- Narra Wood (default) -- */
+  body.t-narra { --bg: #1a1208; --surface: #2a1f0e; --border: #7a5c2e; --board-bg: #5c3210; --board-border: #7a4a1e; }
+  body.t-narra #board-watermark { color: #d4a843; }
+  body.t-narra .cell    { background: #c8843a; }
+  body.t-narra .cell.sh { background: #a86a28; }
+  body.t-narra .cell.bz { background: #2a4a7a; } body.t-narra .cell.bz.sh { background: #1e3860; }
+  body.t-narra .cell.rz { background: #7a2a2a; } body.t-narra .cell.rz.sh { background: #601e1e; }
+  body.t-narra .cell.mz { background: #8a5818; } body.t-narra .cell.mz.sh { background: #7a4a10; }
+
+  /* -- Night Ops -- */
+  body.t-night { --bg: #070f07; --surface: #0d1a0d; --border: #1a4a1a; --board-bg: #0a1a0a; --board-border: #1a4a1a; }
+  body.t-night #board-watermark { color: #4caf50; }
+  body.t-night .cell    { background: #0d2a0d; }
+  body.t-night .cell.sh { background: #091d09; }
+  body.t-night .cell.bz { background: #0a0a2e; } body.t-night .cell.bz.sh { background: #07071f; }
+  body.t-night .cell.rz { background: #2e0a0a; } body.t-night .cell.rz.sh { background: #1f0707; }
+  body.t-night .cell.mz { background: #0d1a0d; } body.t-night .cell.mz.sh { background: #091309; }
+  body.t-night #title-screen { background: radial-gradient(ellipse at 50% 30%, #0d2a0d, #070f07 70%); }
+  body.t-night .logo h1 { color: #4caf50; text-shadow: 0 0 20px rgba(76,175,80,.4); }
+  body.t-night .stars { color: #4caf50; }
+  body.t-night .divider { background: #1a4a1a; }
+  body.t-night #ai-bar { background: linear-gradient(90deg, #4caf50, #81c784); }
+
+  /* -- Baybayin Gold -- */
+  body.t-bay { --bg: #2a1a08; --surface: #3a2a10; --border: #c8943a; --board-bg: #2a1a08; --board-border: #c8943a; --gold: #c8943a; --gold-light: #e0b060; --text: #f5e8c8; --muted: #b09060; }
+  body.t-bay #board-watermark { color: #8b4513; }
+  body.t-bay .cell    { background: #f5e8c8; }
+  body.t-bay .cell.sh { background: #e8d8b0; }
+  body.t-bay .cell.bz { background: #c8d8f0; } body.t-bay .cell.bz.sh { background: #b8c8e0; }
+  body.t-bay .cell.rz { background: #f0c8c8; } body.t-bay .cell.rz.sh { background: #e0b8b8; }
+  body.t-bay .cell.mz { background: #e8e0c0; } body.t-bay .cell.mz.sh { background: #d8d0b0; }
+  body.t-bay .piece.rp { background: linear-gradient(135deg,#8a1010,#b01818); }
+  body.t-bay .piece.bp { background: linear-gradient(135deg,#0a2050,#0d306e); }
+  body.t-bay #title-screen { background: radial-gradient(ellipse at 50% 30%, #5a3a10, #2a1a08 70%); }
+
+  /* Dynamic board border */
+  #board { border-color: var(--board-border, var(--border)); background: var(--board-bg, #0d0a05); }
+
+  /* THEME SCREEN */
+  #theme-screen { justify-content: flex-start; gap: 14px; }
+  #theme-screen h2 { color: var(--gold); font-size: 1.3rem; text-align: center; margin-top: 8px; }
+  .theme-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; width: 100%; max-width: 760px; }
+  .theme-card { border: 2px solid var(--border); border-radius: 10px; padding: 16px 12px; cursor: pointer; text-align: center; transition: border-color .2s; background: var(--surface); -webkit-tap-highlight-color: rgba(212,168,67,0.2); touch-action: manipulation; font-family: Georgia, serif; }
+  .theme-card:active { border-color: var(--gold); }
+  .theme-card.selected { border-color: var(--gold); }
+  .theme-card .tname { font-size: .8rem; color: var(--gold-light); font-weight: bold; margin-top: 6px; }
+  .theme-card .tsub  { font-size: .68rem; color: var(--muted); margin-top: 2px; }
+  .mini-board { display: grid; grid-template-columns: repeat(9,13px); grid-template-rows: repeat(8,9px); gap: 1px; border-radius: 3px; padding: 2px; margin: 0 auto; }
+  .mb-cell { width: 13px; height: 9px; border-radius: 1px; }
+
+  /* Narra mini */
+  .narra-def { background: #c8843a; } .narra-sh { background: #a86a28; }
+  .narra-bz  { background: #2a4a7a; } .narra-bzs{ background: #1e3860; }
+  .narra-rz  { background: #7a2a2a; } .narra-rzs{ background: #601e1e; }
+  .narra-mz  { background: #8a5818; } .narra-mzs{ background: #7a4a10; }
+  .mini-board.narra { background: #5c3210; border: 2px solid #7a4a1e; }
+
+  /* Night mini */
+  .night-def { background: #0d2a0d; } .night-sh { background: #091d09; }
+  .night-bz  { background: #0a0a2e; } .night-bzs{ background: #07071f; }
+  .night-rz  { background: #2e0a0a; } .night-rzs{ background: #1f0707; }
+  .night-mz  { background: #0d1a0d; } .night-mzs{ background: #091309; }
+  .mini-board.night { background: #0a1a0a; border: 2px solid #1a4a1a; }
+
+  /* Baybayin mini */
+  .bay-def { background: #f5e8c8; } .bay-sh { background: #e8d8b0; }
+  .bay-bz  { background: #c8d8f0; } .bay-bzs{ background: #b8c8e0; }
+  .bay-rz  { background: #f0c8c8; } .bay-rzs{ background: #e0b8b8; }
+  .bay-mz  { background: #e8e0c0; } .bay-mzs{ background: #d8d0b0; }
+  .mini-board.bay { background: #2a1a08; border: 2px solid #c8943a; }
+
+  @media (max-width: 400px) { :root { --cell-w: 40px; --cell-h: 28px; --gap: 1px; } .piece { width: 37px; height: 24px; } .piece .rs { font-size: 7px; } .piece .rn { font-size: 5px; } .piece .s { font-size: 7px; } .spy-icon { width: 16px; height: 16px; } }
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="dismissBattle()" style="cursor:pointer"></div>
+<div id="battle-popup" onclick="dismissBattle()" style="cursor:pointer">
+  <h3>⚔️ Challenge!</h3>
+  <div class="bvs">
+    <div class="bps red" id="bp-red">🔴<br><span style="font-size:.7rem;opacity:.8">RED</span></div>
+    <span style="color:var(--gold);font-size:1.2rem">VS</span>
+    <div class="bps blue" id="bp-blue">🔵<br><span style="font-size:.7rem;opacity:.8">BLUE</span></div>
+  </div>
+  <div id="bp-result"></div>
+  <div id="bp-sub"></div>
+  <div id="bp-dismiss">Tap anywhere to dismiss</div>
+</div>
+
+<!-- THEME -->
+<div class="screen" id="theme-screen">
+  <h2>🎨 Choose Board Style</h2>
+  <div class="theme-grid">
+    <button class="theme-card selected" id="tc-narra" onclick="selectTheme('narra')">
+      <div class="mini-board narra" id="mb-narra"></div>
+      <div class="tname">Narra Wood</div>
+      <div class="tsub">Classic warm finish</div>
+    </button>
+    <button class="theme-card" id="tc-night" onclick="selectTheme('night')">
+      <div class="mini-board night" id="mb-night"></div>
+      <div class="tname">Night Ops</div>
+      <div class="tsub">Covert dark green</div>
+    </button>
+    <button class="theme-card" id="tc-bay" onclick="selectTheme('bay')">
+      <div class="mini-board bay" id="mb-bay"></div>
+      <div class="tname">Baybayin Gold</div>
+      <div class="tsub">Filipino parchment</div>
+    </button>
+  </div>
+  <p style="font-size:.78rem;color:var(--muted);text-align:center;font-style:italic">Tap a board to preview, then continue</p>
+  <button class="btn" id="theme-next-btn" onclick="goFromTheme()">Continue →</button>
+  <button class="btn-sec" onclick="showScreen('title-screen')">← Back</button>
+</div>
+
+<!-- TITLE -->
+<div class="screen active" id="title-screen">
+  <div class="logo">
+    <div class="stars">★ ★ ★ ★ ★</div>
+    <h1>GAME OF THE<br>GENERALS</h1>
+    <p>Ang Larong Heneral · Salpakan</p>
+    <div class="stars" style="font-size:.9rem;margin-top:8px">✦ Filipino Strategy Game ✦</div>
+  </div>
+  <div class="divider"></div>
+  <button class="mode-card" onclick="startGame('pvp')"><h3>👥 Two Players</h3><p>Play with a friend on the same device. Pass the phone each turn.</p></button>
+  <button class="mode-card" onclick="startGame('ai')"><h3>🤖 vs Computer</h3><p>Challenge the AI. You play Red, AI plays Blue.</p></button>
+  <button class="btn-sec" onclick="showScreen('howto-screen')">📖 How to Play</button>
+  <p style="color:var(--muted);font-size:.72rem">Digital Arbiter • Offline • No Battery Drain</p>
+  <p style="color:var(--border);font-size:.65rem;text-align:center;margin-top:4px">© 2026 JMBio032026 · All Rights Reserved</p>
+</div>
+
+<!-- HOW TO PLAY -->
+<div class="screen" id="howto-screen">
+  <h2>How to Play</h2>
+  <div class="rc"><h3>🎯 Objective</h3><p>Capture the opponent's <strong style="color:var(--gold-light)">FLAG</strong>, or march your Flag to their back row safely — no enemy piece adjacent!</p></div>
+  <div class="rc"><h3>♟️ Movement</h3><ul><li>One piece, one square per turn.</li><li>Forward, backward, or sideways <strong style="color:var(--gold-light)">only</strong>.</li><li><strong style="color:#e74c3c">Diagonal moves are ILLEGAL.</strong></li><li>Cannot land on your own piece.</li></ul></div>
+  <div class="rc"><h3>⚔️ Battle</h3><ul><li>Move into an enemy square to challenge. Higher rank wins. Equal = both eliminated.</li><li><strong style="color:var(--gold-light)">SPY</strong> beats all officers &amp; the Flag — loses to Private.</li><li><strong style="color:var(--gold-light)">PRIVATE</strong> beats Spy and Flag.</li><li><strong style="color:var(--gold-light)">FLAG</strong> loses to everyone.</li><li>The arbiter only reveals <em>which color loses</em> — ranks stay secret!</li></ul></div>
+  <div class="rc"><h3>🚩 Winning</h3><ul><li>Capture the enemy Flag.</li><li>Your Flag challenges the enemy Flag — your Flag wins!</li><li>March your Flag to the opponent's back row with no adjacent enemy.</li><li>Opponent resigns.</li></ul></div>
+  <div class="rc"><h3>📋 Ranks (High → Low)</h3>
+    <table class="rt"><tr><th>Piece</th><th>Symbol</th><th>Qty</th></tr>
+    <tr><td>Five-Star General</td><td>⭐⭐⭐⭐⭐</td><td>1</td></tr>
+    <tr><td>Four-Star General</td><td>⭐⭐⭐⭐</td><td>1</td></tr>
+    <tr><td>Three-Star General</td><td>⭐⭐⭐</td><td>1</td></tr>
+    <tr><td>Two-Star General</td><td>⭐⭐</td><td>1</td></tr>
+    <tr><td>One-Star General</td><td>⭐</td><td>1</td></tr>
+    <tr><td>Colonel</td><td>COL</td><td>1</td></tr>
+    <tr><td>Lt. Colonel</td><td>LTC</td><td>1</td></tr>
+    <tr><td>Major</td><td>MAJ</td><td>1</td></tr>
+    <tr><td>Captain</td><td>CPT</td><td>1</td></tr>
+    <tr><td>1st Lieutenant</td><td>1LT</td><td>1</td></tr>
+    <tr><td>2nd Lieutenant</td><td>2LT</td><td>1</td></tr>
+    <tr><td>Sergeant</td><td>SGT</td><td>1</td></tr>
+    <tr><td>Private</td><td>PVT</td><td>6</td></tr>
+    <tr><td>Spy</td><td>SPY</td><td>2</td></tr>
+    <tr><td>Flag</td><td>🚩</td><td>1</td></tr></table>
+  </div>
+  <button class="btn" onclick="showScreen('title-screen')">← Back</button>
+  <div style="height:20px"></div>
+</div>
+
+<!-- SETUP -->
+<div class="screen" id="setup-screen">
+  <h2 id="setup-title">🔴 Red Player Setup</h2>
+  <div class="info-box"><strong>Arrange your 21 pieces in the 3 rows.</strong><br>Tap a piece to select (gold outline), tap another cell to swap. Leave 6 squares empty — they let your front row move!</div>
+  <div id="setup-wrap"></div>
+  <div class="sub-label">Pieces: <span id="pc">21</span> placed · <span id="ec">6</span> empty</div>
+  <div class="btn-row">
+    <button class="btn-sec" onclick="rndSetup()">🔀 Randomize</button>
+    <button class="btn" onclick="confirmSetup()">✓ Ready</button>
+  </div>
+  <button class="btn-sec" onclick="showScreen('title-screen')">← Back</button>
+</div>
+
+<!-- GAME -->
+<div class="screen" id="game-screen">
+  <div class="game-hdr">
+    <div class="ptag red" id="rtag">🔴 RED</div>
+    <div id="turn-label">Red's Turn</div>
+    <div class="ptag blue" id="btag">🔵 BLUE</div>
+  </div>
+  <div id="scoreboard">
+    <div class="score-box red"><div class="slabel">Red Wins</div><div class="sval" id="sc-red">0</div></div>
+    <div class="score-box draws"><div class="slabel">Draws</div><div class="sval" id="sc-draw">0</div></div>
+    <div class="score-box blue"><div class="slabel">Blue Wins</div><div class="sval" id="sc-blue">0</div></div>
+  </div>
+  <div id="board-scale-wrap"><div id="board-wrap"><div id="board"><svg id="board-watermark" width="460" height="280" viewBox="0 0 460 280">
+  <!-- LUZON -->
+  <path fill="currentColor" d="M30,145 C28,138 26,128 28,120 C30,112 35,108 38,102 C41,96 42,88 40,82 C38,76 33,73 32,67 C31,61 34,55 38,51 C42,47 47,46 51,43 C55,40 57,35 56,29 C55,23 51,19 50,13 C49,7 52,2 57,1 C62,0 67,3 71,7 C75,11 77,17 81,20 C85,23 90,23 94,21 C98,19 100,14 104,12 C108,10 113,11 116,14 C119,17 119,22 121,26 C123,30 127,33 130,37 C133,41 134,46 132,51 C130,56 126,58 124,63 C122,68 123,74 126,78 C129,82 133,83 135,88 C137,93 136,99 133,103 C130,107 126,108 123,112 C120,116 119,121 120,127 C121,133 124,137 124,143 C124,149 121,154 118,158 C115,162 111,164 108,168 C105,172 104,177 105,183 C106,189 109,193 109,199 C109,205 106,210 102,213 C98,216 93,216 89,214 C85,212 83,208 79,206 C75,204 70,205 66,203 C62,201 60,196 61,191 C62,186 66,183 67,178 C68,173 66,167 63,163 C60,159 56,158 53,154 C50,150 50,144 50,138 C50,132 52,126 51,120 C50,114 46,110 43,105 C40,100 40,93 43,88 C46,83 51,81 53,76 C55,71 53,65 50,61 C47,57 43,56 41,52 C39,48 40,42 43,39 C46,36 50,36 53,38 C56,40 57,44 60,46 C63,48 67,47 69,45 C71,43 71,39 70,36 C69,33 67,31 67,28 C67,25 69,22 72,21 C75,20 78,22 80,25 C82,28 82,32 83,35 C84,38 86,41 89,42 C92,43 95,41 97,39 C99,37 99,33 98,30 C97,27 95,25 95,22 C95,19 97,16 100,15 C103,14 106,16 108,19 C110,22 110,26 111,30 C112,34 114,37 117,39 C120,41 124,41 127,40 C130,39 132,36 133,33 C134,30 133,26 134,23 C135,20 138,18 141,18 C144,18 146,21 147,24 C148,27 147,31 147,35 C147,39 148,43 151,45 C154,47 157,46 160,45 C163,44 165,41 166,38 C167,35 166,31 167,28 C168,25 171,23 174,23 C177,23 179,26 180,29 C181,32 180,36 179,39 C178,42 176,45 176,48 C176,51 178,54 181,55 C184,56 187,54 189,52 C191,50 191,46 192,43 C193,40 195,38 198,38 C201,38 203,41 203,44 C203,47 201,50 200,53 C199,56 199,60 200,63 C201,66 203,68 203,71 C203,74 201,77 199,79 C197,81 194,81 192,83 C190,85 190,89 192,91 C194,93 197,92 199,94 C201,96 201,100 199,102 C197,104 194,104 192,106 C190,108 190,112 192,114 C194,116 197,116 199,118 C201,120 201,124 199,126 C197,128 194,128 192,130 C190,132 190,136 192,138 C194,140 197,140 199,142 C201,144 201,148 199,150 C197,152 194,152 192,154 C190,156 190,160 192,162 C194,164 197,163 198,166 C199,169 197,172 195,174 C193,176 190,176 188,178 C186,180 186,184 188,186 C190,188 193,187 195,189 C197,191 197,195 195,197 C193,199 190,199 188,201 C186,203 186,207 188,209 C190,211 193,210 194,212 C195,215 193,218 191,220 C189,222 186,222 184,221 C182,220 181,218 179,217 C177,216 174,216 172,217 C170,218 169,220 167,221 C165,222 162,222 160,220 C158,218 158,214 157,211 C156,208 154,205 151,204 C148,203 145,204 143,203 C141,202 140,199 140,196 C140,193 141,190 140,187 C139,184 137,182 135,180 C133,178 130,177 128,175 C126,173 125,170 126,167 C127,164 130,163 131,160 C132,157 131,153 129,151 C127,149 124,149 122,147 C120,145 119,142 119,139 C119,136 120,133 120,130 C120,127 119,124 117,122 C115,120 112,120 110,118 C108,116 107,113 108,110 C109,107 112,106 113,103 C114,100 113,96 111,94 C109,92 106,92 104,90 C102,88 102,84 104,82 C106,80 109,80 111,78 C113,76 113,72 111,70 C109,68 106,68 104,66 C102,64 102,60 104,58 C106,56 109,56 111,54 C113,52 113,48 111,46 C109,44 106,44 104,42 C102,40 102,36 104,34 C106,32 109,32 111,30 C113,28 113,24 111,22 C109,20 106,20 104,18 C102,16 102,12 104,10 C106,8 109,8 110,6 C111,4 110,1 108,0 C106,-1 103,0 101,2 C99,4 98,7 96,9 C94,11 91,12 89,11 C87,10 86,7 84,6 C82,5 79,6 78,8 C77,10 78,13 77,16 C76,19 74,21 71,22 C68,23 65,21 63,19 C61,17 61,13 59,11 C57,9 54,9 52,10 C50,11 49,14 49,17 C49,20 50,23 49,26 C48,29 46,31 43,32 C40,33 37,31 35,29 C33,27 32,24 30,22 C28,20 25,19 23,20 C21,21 20,24 20,27 C20,30 21,33 21,36 C21,39 20,42 18,44 C16,46 13,46 11,48 C9,50 9,54 11,56 C13,58 16,57 18,59 C20,61 20,65 18,67 C16,69 13,68 11,70 C9,72 9,76 11,78 C13,80 16,79 18,81 C20,83 20,87 18,89 C16,91 13,90 12,93 C11,96 13,99 16,101 C19,103 22,102 24,104 C26,106 26,110 24,112 C22,114 19,113 17,115 C15,117 15,121 17,123 C19,125 22,124 24,126 C26,128 26,132 24,134 C22,136 19,135 17,137 C15,139 15,143 17,145 C19,147 22,146 24,148 C26,150 26,154 24,156 C22,158 19,157 17,159 C15,161 15,165 17,167 C19,169 22,168 24,170 C26,172 26,176 24,178 C22,180 19,179 17,181 C15,183 15,187 17,189 C19,191 22,190 24,192 C26,194 26,198 24,200 C22,202 19,201 17,203 C15,205 15,209 17,211 C19,213 22,212 24,214 C26,216 26,220 24,222 C22,224 19,223 17,224 C15,225 14,228 15,231 C16,234 19,235 22,236 L30,236 C33,235 35,232 37,230 C39,228 42,227 44,228 C46,229 47,232 49,233 C51,234 54,234 56,232 C58,230 58,226 57,223 C56,220 54,218 53,215 C52,212 52,208 54,206 C56,204 59,204 61,202 C63,200 63,196 61,194 C59,192 56,192 54,190 C52,188 52,184 54,182 C56,180 59,180 61,178 C63,176 63,172 61,170 C59,168 56,168 54,166 C52,164 52,160 54,158 C56,156 59,156 61,154 C63,152 63,148 61,146 C59,144 56,144 54,142 C52,140 52,136 54,134 C56,132 59,132 61,130 C63,128 63,124 61,122 C59,120 56,120 54,118 C52,116 52,112 54,110 C56,108 59,108 61,106 C63,104 63,100 61,98 C59,96 56,96 54,94 C52,92 52,88 54,86 C56,84 59,84 61,82 C63,80 63,76 61,74 C59,72 56,72 54,70 C52,68 52,64 54,62 C56,60 59,60 61,58 C63,56 63,52 61,50 C59,48 56,48 54,46 C52,44 52,40 54,38 C56,36 59,36 61,34 C63,32 63,28 61,26 C59,24 56,24 54,22 C52,20 52,16 54,14 C56,12 59,12 61,10 C63,8 63,4 61,2 L57,0 C54,0 51,2 49,5 C47,8 47,12 46,16 C45,20 43,23 40,25 C37,27 33,27 30,25 C27,23 26,19 25,15 C24,11 24,6 22,3 C20,0 17,-1 14,0 C11,1 10,4 9,7 C8,10 8,14 9,17 C10,20 12,22 12,25 C12,28 10,30 8,32 C6,34 3,34 2,37 C1,40 3,43 6,44 C9,45 12,44 14,46 C16,48 16,52 14,54 C12,56 9,55 7,57 C5,59 5,63 7,65 C9,67 12,66 14,68 C16,70 16,74 14,76 C12,78 9,77 7,79 C5,81 5,85 7,87 C9,89 12,88 14,90 C16,92 16,96 14,98 C12,100 9,99 7,101 C5,103 5,107 7,109 C9,111 12,110 14,112 C16,114 16,118 14,120 C12,122 9,121 7,123 C5,125 5,129 7,131 C9,133 12,132 14,134 C16,136 16,140 14,142 C12,144 9,143 7,145 Z"/>
+  <!-- PALAWAN diagonal strip -->
+  <path fill="currentColor" d="M105,250 C102,244 101,238 104,232 C107,226 113,223 116,217 C119,211 118,204 115,199 C112,194 107,192 105,187 C103,182 105,176 108,172 C111,168 116,166 118,161 C120,156 118,150 115,146 C112,142 108,141 107,136 L112,134 C115,138 116,144 119,149 C122,154 127,157 128,163 C129,169 127,175 124,180 C121,185 116,187 114,192 C112,197 114,203 117,208 C120,213 125,215 126,221 C127,227 124,233 121,238 C118,243 114,247 110,250 Z"/>
+  <!-- MINDORO -->
+  <ellipse fill="currentColor" cx="88" cy="220" rx="9" ry="14" transform="rotate(-15,88,220)"/>
+  <!-- VISAYAS cluster -->
+  <ellipse fill="currentColor" cx="230" cy="170" rx="18" ry="10"/>
+  <ellipse fill="currentColor" cx="260" cy="158" rx="13" ry="8"/>
+  <ellipse fill="currentColor" cx="285" cy="172" rx="11" ry="7"/>
+  <ellipse fill="currentColor" cx="248" cy="185" rx="10" ry="7"/>
+  <ellipse fill="currentColor" cx="275" cy="190" rx="8" ry="6"/>
+  <ellipse fill="currentColor" cx="305" cy="165" rx="12" ry="8"/>
+  <ellipse fill="currentColor" cx="315" cy="182" rx="7" ry="12" transform="rotate(10,315,182)"/>
+  <ellipse fill="currentColor" cx="320" cy="198" rx="6" ry="12" transform="rotate(10,320,198)"/>
+  <ellipse fill="currentColor" cx="285" cy="162" rx="4" ry="13" transform="rotate(-5,285,162)"/>
+  <ellipse fill="currentColor" cx="290" cy="198" rx="11" ry="7"/>
+  <ellipse fill="currentColor" cx="258" cy="177" rx="5" ry="14" transform="rotate(5,258,177)"/>
+  <ellipse fill="currentColor" cx="228" cy="185" rx="16" ry="9"/>
+  <!-- MINDANAO -->
+  <path fill="currentColor" d="M355,120 C350,114 344,110 340,104 C336,98 335,90 338,84 C341,78 347,75 350,69 C353,63 352,55 348,50 C344,45 338,44 335,39 C332,34 333,27 337,23 C341,19 347,19 351,22 C355,25 356,31 360,34 C364,37 369,37 373,35 C377,33 379,28 382,25 C385,22 390,21 394,23 C398,25 400,30 401,35 C402,40 401,46 403,51 C405,56 409,60 411,65 C413,70 413,76 411,81 C409,86 405,89 403,94 C401,99 401,105 403,110 C405,115 409,118 410,123 C411,128 409,134 406,138 C403,142 399,144 396,148 C393,152 392,157 393,163 C394,169 397,173 397,179 C397,185 394,190 390,193 C386,196 381,196 377,199 C373,202 371,207 372,213 C373,219 377,223 377,229 C377,235 373,240 368,242 C363,244 358,242 354,240 C350,238 348,234 344,233 C340,232 336,234 333,232 C330,230 329,225 330,221 C331,217 334,214 335,210 C336,206 335,201 332,198 C329,195 325,195 322,192 C319,189 319,184 322,181 C325,178 329,178 332,175 C335,172 336,167 334,164 C332,161 328,160 326,157 C324,154 324,149 327,147 C330,145 334,146 337,144 C340,142 341,137 339,134 C337,131 333,131 331,128 C329,125 330,120 333,118 C336,116 340,117 343,115 C346,113 347,108 345,105 C343,102 339,102 337,100 C335,98 335,93 337,91 C339,89 342,89 344,91 C346,93 346,97 348,99 C350,101 354,101 356,99 C358,97 358,93 357,90 C356,87 354,85 354,82 C354,79 356,76 359,76 C362,76 364,79 364,82 C364,85 362,88 362,91 C362,94 364,97 367,98 C370,99 373,97 374,94 C375,91 374,87 375,84 C376,81 379,79 382,80 C385,81 386,84 386,87 C386,90 384,93 384,96 C384,99 386,102 389,103 C392,104 395,102 396,99 C397,96 396,92 397,89 C398,86 401,84 404,85 C407,86 408,89 408,92 C408,95 406,98 406,101 C406,104 408,107 411,108 C414,109 417,107 418,104 C419,101 418,97 418,94 C418,91 419,88 421,86 C423,84 426,83 428,85 C430,87 430,91 429,94 C428,97 426,100 426,103 C426,106 428,109 430,110 L430,115 C428,117 425,117 423,119 C421,121 420,125 422,127 C424,129 427,128 429,130 L430,140 C428,141 425,141 423,143 C421,145 421,149 423,151 C425,153 428,152 430,154 L430,165 C427,165 424,166 422,168 C420,170 420,174 422,176 C424,178 427,177 429,179 L430,188 C427,188 424,189 422,191 C420,193 421,197 423,199 C425,201 428,200 430,201 L430,212 C427,212 424,213 422,215 C420,217 420,221 422,223 C424,225 427,224 429,226 L430,236 C427,236 424,237 422,239 C420,241 420,245 422,247 C424,249 427,248 429,250 L430,260 C427,260 424,261 422,263 C420,265 420,269 422,271 C424,273 427,272 430,273 L430,278 L355,278 C352,276 350,272 352,268 C354,264 358,263 359,259 C360,255 358,250 355,248 C352,246 348,247 345,245 C342,243 341,238 343,234 C345,230 349,229 350,225 C351,221 349,216 346,214 C343,212 339,213 336,211 C333,209 332,204 334,200 C336,196 340,195 342,192 C344,189 344,184 342,181 C340,178 336,178 334,175 C332,172 332,167 334,164 C336,161 340,161 342,159 C344,157 344,152 342,150 C340,148 337,148 335,146 C333,144 332,140 334,138 C336,136 339,136 341,134 C343,132 343,128 341,126 C339,124 336,124 334,122 C332,120 332,116 334,114 C336,112 339,112 341,110 C343,108 343,104 341,102 C339,100 336,100 334,98 C332,96 332,92 334,90 C336,88 339,88 341,86 C343,84 343,80 341,78 C339,76 336,76 334,74 C332,72 332,68 334,66 C336,64 339,64 341,62 C343,60 343,56 341,54 C339,52 336,52 334,50 C332,48 332,44 334,42 C336,40 339,40 341,38 C343,36 343,32 341,30 C339,28 336,28 334,26 C332,24 332,20 334,18 C336,16 339,16 341,14 C343,12 343,8 341,6 C339,4 336,4 334,2 L340,0 C343,2 344,6 346,8 C348,10 352,10 354,8 C356,6 356,2 358,0 L363,0 C364,3 363,7 365,9 C367,11 370,11 372,9 C374,7 374,3 376,1 L382,0 C382,3 381,7 382,10 C383,13 386,15 389,14 C392,13 393,10 394,7 C395,4 395,0 397,0 L400,0 C400,4 398,8 399,11 C400,14 403,16 406,15 C409,14 410,11 411,8 C412,5 412,1 414,0 L419,0 C419,4 418,8 420,10 C422,12 425,12 427,10 C429,8 429,4 430,1 L430,0 L355,0 C352,2 351,6 353,8 C355,10 358,10 360,8 C362,6 362,2 363,0"/>
+  <!-- SULU ARCHIPELAGO -->
+  <ellipse fill="currentColor" cx="385" cy="255" rx="8" ry="4" transform="rotate(-25,385,255)"/>
+  <ellipse fill="currentColor" cx="405" cy="262" rx="7" ry="4" transform="rotate(-25,405,262)"/>
+  <ellipse fill="currentColor" cx="422" cy="268" rx="6" ry="3" transform="rotate(-25,422,268)"/>
+  <ellipse fill="currentColor" cx="440" cy="273" rx="5" ry="3" transform="rotate(-25,440,273)"/>
+</svg></div></div></div></div>
+  <div id="ai-bar-wrap">
+    <div id="ai-label">🤖 AI is thinking…</div>
+    <div id="ai-bar-bg"><div id="ai-bar"></div></div>
+  </div>
+  <div id="status">Select a piece to move</div>
+  <div class="btn-row">
+    <button class="mini" onclick="goMenu()">🏠 Menu</button>
+    <button class="mini" id="sur-btn" onclick="surrender()">🏳️ Surrender</button>
+    <button class="btn" id="pass-btn" onclick="showHandover()" style="display:none">🤝 Pass Device</button>
+    <button class="btn" id="play-again-btn" onclick="playAgain()" style="display:none">🔄 Play Again</button>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div id="confirm-modal">
+  <div class="confirm-box">
+    <p id="confirm-msg">Return to main menu?</p>
+    <div class="confirm-btns">
+      <button class="confirm-yes" id="confirm-yes-btn">Yes</button>
+      <button class="confirm-no" onclick="closeConfirm()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- HANDOVER SCREEN -->
+<div id="handover-screen">
+  <div class="ho-shield">🛡️</div>
+  <div class="ho-icon" id="ho-icon">🔴</div>
+  <div class="ho-title" id="ho-title">RED'S TURN</div>
+  <div class="ho-sub" id="ho-sub">Pass the device to Red.<br>Tap the button when you are ready.</div>
+  <button class="ho-btn" onclick="dismissHandover()">▶ I'm Ready!</button>
+  <button onclick="goMenu()" style="background:transparent;border:1px solid #444;color:#888;padding:8px 20px;border-radius:6px;font-family:Georgia,serif;font-size:.8rem;cursor:pointer;margin-top:6px;">🏠 Back to Menu</button>
+</div>
+
+
+<script>
+
+// ============================================================
+//  AUTO-SCALE BOARD TO FIT ANY SCREEN SIZE
+// ============================================================
+function autoScale() {
+  var wrap = document.getElementById('board-scale-wrap');
+  var board = document.getElementById('board');
+  if (!wrap || !board) return;
+
+  // Reset scale first to measure natural board width
+  wrap.style.transform = 'scale(1)';
+  wrap.style.marginBottom = '0px';
+
+  var boardW = board.offsetWidth;   // natural board width in px
+  var boardH = board.offsetHeight;  // natural board height in px
+  var screenW = window.innerWidth;
+  var screenH = window.innerHeight;
+
+  // Available width with small side padding
+  var availW = screenW - 16;
+  var availH = screenH * 0.65; // don't let board take more than 65% of screen height
+
+  // Calculate scale to fit width, capped so it never exceeds natural size
+  var scaleW = availW / boardW;
+  var scaleH = availH / boardH;
+  var scale = Math.min(scaleW, scaleH, 1.0); // never scale UP, only down
+  scale = Math.max(scale, 0.4); // never shrink below 40%
+
+  // Apply scale from top-center
+  wrap.style.transform = 'scale(' + scale + ')';
+  wrap.style.transformOrigin = 'top center';
+
+  // Compensate for the space the scaled board now leaves
+  // (scaled element still occupies original space in flow)
+  var scaledH = boardH * scale;
+  var savedH = boardH - scaledH;
+  wrap.style.marginBottom = '-' + Math.round(savedH) + 'px';
+}
+
+// Run on load, screen resize, and orientation change
+window.addEventListener('resize', autoScale);
+window.addEventListener('orientationchange', function(){ setTimeout(autoScale, 200); });
+
+// © 2026 JMBio032026. All Rights Reserved.
+// Game of the Generals — Digital Adaptation (Salpakan)
+// Unauthorized copying or distribution is strictly prohibited.
+
+// ── iPad / iOS touch fix ──────────────────────────────────────────────────
+// iOS Safari requires cursor:pointer OR this trick to fire click on non-button elements
+document.addEventListener('touchstart', function(){}, {passive: true});
+document.addEventListener('click', function(){}, false);
+
+// 300ms delay handled by touch-action:manipulation in CSS
+// ─────────────────────────────────────────────────────────────────────────
+
+
+// ============================================================
+//  CONSTANTS
+// ============================================================
+const ROWS = 8, COLS = 9;
+const DEFS = [
+  {id:'G5',name:'Five-Star General',sym:'⭐⭐⭐⭐⭐',rank:15,short:'GEN5'},
+  {id:'G4',name:'Four-Star General', sym:'⭐⭐⭐⭐',  rank:14,short:'GEN4'},
+  {id:'G3',name:'Three-Star General',sym:'⭐⭐⭐',    rank:13,short:'GEN3'},
+  {id:'G2',name:'Two-Star General',  sym:'⭐⭐',      rank:12,short:'GEN2'},
+  {id:'G1',name:'One-Star General',  sym:'⭐',        rank:11,short:'GEN1'},
+  {id:'CO',name:'Colonel',           sym:'COL',        rank:10,short:'COL'},
+  {id:'LC',name:'Lt. Colonel',       sym:'LTC',        rank:9, short:'LTC'},
+  {id:'MJ',name:'Major',             sym:'MAJ',        rank:8, short:'MAJ'},
+  {id:'CP',name:'Captain',           sym:'CPT',        rank:7, short:'CPT'},
+  {id:'1L',name:'1st Lieutenant',    sym:'1LT',        rank:6, short:'1LT'},
+  {id:'2L',name:'2nd Lieutenant',    sym:'2LT',        rank:5, short:'2LT'},
+  {id:'SG',name:'Sergeant',          sym:'SGT',        rank:4, short:'SGT'},
+  {id:'P1',name:'Private',           sym:'PVT',        rank:3, short:'PVT', pvt:true},
+  {id:'P2',name:'Private',           sym:'PVT',        rank:3, short:'PVT', pvt:true},
+  {id:'P3',name:'Private',           sym:'PVT',        rank:3, short:'PVT', pvt:true},
+  {id:'P4',name:'Private',           sym:'PVT',        rank:3, short:'PVT', pvt:true},
+  {id:'P5',name:'Private',           sym:'PVT',        rank:3, short:'PVT', pvt:true},
+  {id:'P6',name:'Private',           sym:'PVT',        rank:3, short:'PVT', pvt:true},
+  {id:'S1',name:'Spy',               sym:'SPY',        rank:2, short:'SPY', spy:true},
+  {id:'S2',name:'Spy',               sym:'SPY',        rank:2, short:'SPY', spy:true},
+  {id:'FL',name:'Flag',              sym:'🚩',         rank:1, short:'FLAG',flag:true},
+];
+
+// ============================================================
+//  STATE
+// ============================================================
+let board = [];
+let cur = 'red';       // current player
+let sel = null;        // selected cell {r,c}
+let vms = [];          // valid moves
+let over = false;
+let mode = 'pvp';
+let setupPhase = 0;
+let setupBoards = {};
+let setupGrid = [];
+let setupSel = null;
+// AI uses a plain setTimeout — no intervals
+let aiTimer = null;
+let battleTimer = null;
+let battleCb = null;
+var scores = {red:0, blue:0, draw:0};
+
+// ============================================================
+//  ARBITER
+// ============================================================
+function arb(a, d) {
+  if (a.spy) { return d.pvt ? 'def' : 'atk'; }
+  if (d.spy) { return a.pvt ? 'atk' : 'def'; }
+  if (a.flag) return 'def';
+  if (d.flag) return 'atk';
+  if (a.rank > d.rank) return 'atk';
+  if (d.rank > a.rank) return 'def';
+  return 'draw';
+}
+
+// ============================================================
+//  MOVEMENT — 4 directions only, no diagonals
+// ============================================================
+function getMoves(r, c) {
+  const p = board[r][c];
+  if (!p) return [];
+  const out = [];
+  [[-1,0],[1,0],[0,-1],[0,1]].forEach(([dr,dc]) => {
+    const nr = r+dr, nc = c+dc;
+    if (nr<0||nr>=ROWS||nc<0||nc>=COLS) return;
+    const t = board[nr][nc];
+    if (t && t.player === p.player) return;
+    out.push({r:nr, c:nc, cap:!!t});
+  });
+  return out;
+}
+
+
+// ============================================================
+//  PIECE HTML BUILDER — Style B + star grid arrangements
+// ============================================================
+function pieceHTML(def) {
+  // Star arrangements by rank
+  var starGrids = {
+    15: '<div class="stars"><div class="star-row"><span class="s">⭐</span><span class="s">⭐</span></div><div class="star-row"><span class="s">⭐</span><span class="s">⭐</span><span class="s">⭐</span></div></div>',
+    14: '<div class="stars"><div class="star-row"><span class="s">⭐</span><span class="s">⭐</span></div><div class="star-row"><span class="s">⭐</span><span class="s">⭐</span></div></div>',
+    13: '<div class="stars"><div class="star-row"><span class="s">⭐</span></div><div class="star-row"><span class="s">⭐</span><span class="s">⭐</span></div></div>',
+    12: '<div class="stars"><div class="star-row"><span class="s">⭐</span><span class="s">⭐</span></div></div>',
+    11: '<div class="stars"><div class="star-row"><span class="s">⭐</span></div></div>'
+  };
+  if (starGrids[def.rank]) {
+    return starGrids[def.rank] + '<span class="rn">' + def.name.replace(' General','') + ' Gen</span>';
+  }
+  if (def.flag) return '<span class="rs">🚩</span><span class="rn">Flag</span>';
+  if (def.spy) {
+    var spySvg = '<svg class="spy-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">'
+      // Hat brim
+      + '<ellipse cx="50" cy="38" rx="42" ry="10" fill="currentColor"/>'
+      // Hat top
+      + '<path d="M18 38 Q16 12 50 10 Q84 12 82 38 Z" fill="currentColor"/>'
+      // Hat band highlight
+      + '<rect x="18" y="34" width="64" height="5" rx="2" fill="rgba(0,0,0,0.25)"/>'
+      // Left lens
+      + '<circle cx="33" cy="62" r="12" fill="currentColor"/>'
+      // Right lens
+      + '<circle cx="58" cy="62" r="12" fill="currentColor"/>'
+      // Bridge
+      + '<rect x="43" y="60" width="6" height="4" rx="1" fill="currentColor"/>'
+      // Scarf swoosh
+      + '<path d="M62 68 Q80 58 85 72 Q72 90 50 85 Q60 75 62 68Z" fill="currentColor"/>'
+      + '</svg>';
+    return spySvg + '<span class="rn">Spy</span>';
+  }
+  return '<span class="rs">' + def.short + '</span><span class="rn">' + def.name + '</span>';
+}
+
+// ============================================================
+//  RENDER
+// ============================================================
+function render() {
+  const el = document.getElementById('board');
+  el.innerHTML = '';
+  for (let r=0; r<ROWS; r++) {
+    for (let c=0; c<COLS; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      if (r<=2) cell.classList.add('bz');
+      else if (r>=5) cell.classList.add('rz');
+      else cell.classList.add('mz');
+      if ((r+c)%2===1) cell.classList.add('sh');
+      if (sel && sel.r===r && sel.c===c) cell.classList.add('sel');
+      const vm = vms.find(m=>m.r===r&&m.c===c);
+      if (vm) { cell.classList.add('vm'); if (vm.cap) cell.classList.add('vc'); }
+
+      const p = board[r][c];
+      if (p) {
+        const pe = document.createElement('div');
+        pe.className = 'piece ' + (p.player==='red'?'rp':'bp');
+        const show = over || (mode==='ai'&&p.player==='red') || (mode==='pvp'&&p.player===cur);
+        if (!show) {
+          pe.classList.add('hp');
+        } else {
+          pe.innerHTML = pieceHTML(p.def);
+        }
+        cell.appendChild(pe);
+      }
+      cell.addEventListener('click', ()=>onCell(r,c));
+      el.appendChild(cell);
+    }
+  }
+}
+
+// ============================================================
+//  CELL CLICK
+// ============================================================
+function onCell(r, c) {
+  if (over) return;
+  if (mode==='ai' && cur==='blue') return; // block clicks during AI turn
+  const p = board[r][c];
+  if (sel) {
+    const mv = vms.find(m=>m.r===r&&m.c===c);
+    if (mv) { execMove(sel.r, sel.c, r, c); return; }
+  }
+  if (p && p.player===cur) {
+    sel={r,c}; vms=getMoves(r,c);
+    setSt(p.def.name + (vms.length?'':' — no moves!'));
+    render(); return;
+  }
+  sel=null; vms=[];
+  setSt('Select a piece to move');
+  render();
+}
+
+// ============================================================
+//  EXECUTE MOVE
+// ============================================================
+function execMove(fr, fc, tr, tc) {
+  const atk = board[fr][fc];
+  const def = board[tr][tc];
+  sel=null; vms=[];
+
+  if (def) {
+    const result = arb(atk.def, def.def);
+    showBattle(atk, def, result, function() {
+      applyBattle(fr, fc, tr, tc, atk, def, result);
+      if (!over) endTurn();
+    });
+  } else {
+    board[tr][tc] = atk;
+    board[fr][fc] = null;
+    playSound('move');
+    checkFlagMarch(tr, tc, atk);
+    if (!over) endTurn();
+  }
+}
+
+function applyBattle(fr, fc, tr, tc, atk, def, result) {
+  if (result==='atk') {
+    board[tr][tc]=atk; board[fr][fc]=null;
+    if (def.def.flag) { endGame(atk.player); return; }
+    checkFlagMarch(tr, tc, atk);
+  } else if (result==='def') {
+    board[fr][fc]=null;
+    if (atk.def.flag) endGame(def.player);
+  } else {
+    board[fr][fc]=null; board[tr][tc]=null;
+    if (atk.def.flag||def.def.flag) endGame(null);
+  }
+}
+
+function checkFlagMarch(r, c, piece) {
+  if (!piece.def.flag) return;
+  const back = piece.player==='red'?0:7;
+  if (r!==back) return;
+  const dirs=[[-1,0],[1,0],[0,-1],[0,1]];
+  for (const [dr,dc] of dirs) {
+    const nr=r+dr, nc=c+dc;
+    if (nr<0||nr>=ROWS||nc<0||nc>=COLS) continue;
+    const adj=board[nr][nc];
+    if (adj&&adj.player!==piece.player) return;
+  }
+  endGame(piece.player);
+}
+
+// ============================================================
+//  TURN MANAGEMENT
+// ============================================================
+function endTurn() {
+  // In PVP mode — show handover BEFORE switching player & re-rendering
+  // so opponent pieces are never revealed during the transition
+  if (mode==='pvp' && !over) {
+    // Switch player first (so handover shows correct next player name)
+    cur = cur==='red'?'blue':'red';
+    updHdr();
+    // Show handover screen immediately — board stays hidden under it
+    showHandover();
+    // Render board AFTER handover is visible so pieces are never exposed
+    render();
+    showPassBtn();
+    return;
+  }
+  // AI mode — normal flow
+  cur = cur==='red'?'blue':'red';
+  updHdr();
+  render();
+  if (mode==='ai' && cur==='blue' && !over) {
+    scheduleAI();
+  } else {
+    setSt('Select a piece to move');
+  }
+}
+
+function showPassBtn() {
+  var nextName = cur==='red' ? 'Red' : 'Blue';
+  document.getElementById('pass-btn').style.display = '';
+  document.getElementById('pass-btn').textContent = '🤝 Pass to ' + nextName;
+  document.getElementById('sur-btn').style.display = 'none';
+}
+
+function hidePassBtn() {
+  document.getElementById('pass-btn').style.display = 'none';
+  document.getElementById('sur-btn').style.display = '';
+}
+
+function showHandover() {
+  var el = document.getElementById('handover-screen');
+  var icon = document.getElementById('ho-icon');
+  var title = document.getElementById('ho-title');
+  var sub = document.getElementById('ho-sub');
+  var playerName = cur === 'red' ? 'Red' : 'Blue';
+  var playerColor = cur === 'red' ? 'red' : 'blue';
+  icon.textContent = cur === 'red' ? '🔴' : '🔵';
+  title.textContent = playerName.toUpperCase() + "'S TURN";
+  title.className = 'ho-title ' + playerColor;
+  sub.innerHTML = 'Device passed to <strong style="color:' + (cur==='red'?'#e74c3c':'#2980b9') + '">' + playerName + '</strong>.<br>Tap the button when you are ready to play.';
+  el.classList.remove('red-turn','blue-turn');
+  el.classList.add('show', playerColor + '-turn');
+}
+
+function dismissHandover() {
+  var el = document.getElementById('handover-screen');
+  el.classList.remove('show','red-turn','blue-turn');
+  hidePassBtn();
+  render(); // re-render so current player sees their own pieces revealed
+  setSt('Select a piece to move');
+}
+
+function updHdr() {
+  document.getElementById('turn-label').textContent = cur==='red'?"Red's Turn":"Blue's Turn";
+  document.getElementById('rtag').style.opacity = cur==='red'?'1':'0.4';
+  document.getElementById('btag').style.opacity = cur==='blue'?'1':'0.4';
+}
+
+// ============================================================
+//  AI — simple setTimeout, NO intervals
+// ============================================================
+function scheduleAI() {
+  // Cancel any previous pending AI move
+  if (aiTimer) { clearTimeout(aiTimer); aiTimer=null; }
+
+  // Show countdown bar
+  const barWrap = document.getElementById('ai-bar-wrap');
+  const bar = document.getElementById('ai-bar');
+  setSt('🤖 AI is thinking…');
+  barWrap.classList.add('show');
+  bar.style.transition = 'none';
+  bar.style.width = '100%';
+  // Trigger CSS transition after paint
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      bar.style.transition = 'width 1.5s linear';
+      bar.style.width = '0%';
+    });
+  });
+
+  aiTimer = setTimeout(function() {
+    aiTimer = null;
+    barWrap.classList.remove('show');
+    bar.style.transition = 'none';
+    bar.style.width = '100%';
+    runAI();
+  }, 1500);
+}
+
+function runAI() {
+  if (over || cur!=='blue') return;
+
+  var moves = [];
+  for (var r=0; r<ROWS; r++) {
+    for (var c=0; c<COLS; c++) {
+      if (board[r][c] && board[r][c].player==='blue') {
+        var vm = getMoves(r,c);
+        for (var k=0; k<vm.length; k++) {
+          moves.push({fr:r, fc:c, tr:vm[k].r, tc:vm[k].c, cap:vm[k].cap});
+        }
+      }
+    }
+  }
+
+  if (!moves.length) { endGame('red'); return; }
+
+  var best = null, bestScore = -99999;
+  for (var i=0; i<moves.length; i++) {
+    var mv = moves[i];
+    var score = 0;
+    var atkPiece = board[mv.fr][mv.fc];
+    var defPiece = board[mv.tr][mv.tc];
+    if (defPiece) {
+      if (defPiece.def.flag) {
+        score = 10000;
+      } else {
+        var res = arb(atkPiece.def, defPiece.def);
+        if (res==='atk') score = 100 + defPiece.def.rank * 3;
+        else if (res==='draw') score = 5;
+        else score = -30;
+      }
+    } else {
+      score = mv.tr + (Math.random() * 2);
+      if (atkPiece.def.flag) {
+        score = (mv.tr===7 && !adjEnemy(mv.tr,mv.tc,'blue')) ? 9000 : mv.tr;
+      }
+    }
+    if (score > bestScore) { bestScore = score; best = mv; }
+  }
+
+  if (best) execMove(best.fr, best.fc, best.tr, best.tc);
+}
+
+function adjEnemy(r,c,me) {
+  var dirs=[[-1,0],[1,0],[0,-1],[0,1]];
+  for (var i=0;i<dirs.length;i++) {
+    var nr=r+dirs[i][0], nc=c+dirs[i][1];
+    if (nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&board[nr][nc]&&board[nr][nc].player!==me) return true;
+  }
+  return false;
+}
+
+// ============================================================
+//  BATTLE POPUP
+// ============================================================
+function dismissBattle() {
+  if (!battleCb) return;
+  if (battleTimer) { clearTimeout(battleTimer); battleTimer=null; }
+  document.getElementById('battle-popup').classList.remove('show');
+  document.getElementById('overlay').classList.remove('show');
+  var cb = battleCb; battleCb=null;
+  cb();
+}
+
+function showBattle(atk, def, result, cb) {
+  var redEl = document.getElementById('bp-red');
+  var bluEl = document.getElementById('bp-blue');
+  redEl.innerHTML = '🔴<br><span style="font-size:.7rem;opacity:.8">RED</span>';
+  bluEl.innerHTML = '🔵<br><span style="font-size:.7rem;opacity:.8">BLUE</span>';
+  redEl.style.opacity='1'; redEl.style.textDecoration='none';
+  bluEl.style.opacity='1'; bluEl.style.textDecoration='none';
+
+  var txt, sub, cls;
+  if (result==='draw') {
+    redEl.style.opacity='0.3'; bluEl.style.opacity='0.3';
+    redEl.style.textDecoration='line-through'; bluEl.style.textDecoration='line-through';
+    txt='💥 Both Eliminated!'; sub='Both pieces removed'; cls='dr';
+  } else {
+    var loser = result==='atk' ? def : atk;
+    var loserEl = loser.player==='red' ? redEl : bluEl;
+    loserEl.style.opacity='0.3';
+    loserEl.style.textDecoration='line-through';
+    var winner = loser.player==='red'?'🔵 Blue':'🔴 Red';
+    txt = winner+' piece advances!';
+    cls = loser.player==='red'?'bw':'rw';
+    sub = loser.def.flag
+      ? (loser.player==='red'?'🔴 Red':'🔵 Blue')+"'s FLAG captured!"
+      : (loser.player==='red'?'🔴 Red':'🔵 Blue')+"'s piece is removed";
+  }
+  // Play battle sound
+  playSound('battle');
+
+  var res = document.getElementById('bp-result');
+  res.textContent=txt; res.className=cls;
+  document.getElementById('bp-sub').textContent=sub;
+  document.getElementById('battle-popup').classList.add('show');
+  document.getElementById('overlay').classList.add('show');
+
+  battleCb = cb;
+  if (battleTimer) clearTimeout(battleTimer);
+  battleTimer = setTimeout(dismissBattle, 5000);
+}
+
+// ============================================================
+//  WIN / LOSE
+// ============================================================
+function endGame(winner) {
+  over=true;
+  if (aiTimer) { clearTimeout(aiTimer); aiTimer=null; }
+  document.getElementById('ai-bar-wrap').classList.remove('show');
+  // Update scores
+  if (winner==='red') scores.red++;
+  else if (winner==='blue') scores.blue++;
+  else scores.draw++;
+  document.getElementById('sc-red').textContent=scores.red;
+  document.getElementById('sc-blue').textContent=scores.blue;
+  document.getElementById('sc-draw').textContent=scores.draw;
+  render();
+  var bar=document.getElementById('status');
+  bar.textContent = winner==='red'?'🎉 RED WINS! Mabuhay!':winner==='blue'?'🎉 BLUE WINS! Mabuhay!':"It's a draw!";
+  bar.className='win';
+  document.getElementById('sur-btn').style.display='none';
+  document.getElementById('pass-btn').style.display='none';
+  document.getElementById('play-again-btn').style.display='';
+  playSound('win');
+}
+
+
+// ============================================================
+//  BOARD THEMES
+// ============================================================
+var currentTheme = 'narra';
+
+var THEMES = {
+  narra: { def:'narra-def', sh:'narra-sh', bz:'narra-bz', bzs:'narra-bzs', rz:'narra-rz', rzs:'narra-rzs', mz:'narra-mz', mzs:'narra-mzs' },
+  night: { def:'night-def', sh:'night-sh', bz:'night-bz', bzs:'night-bzs', rz:'night-rz', rzs:'night-rzs', mz:'night-mz', mzs:'night-mzs' },
+  bay:   { def:'bay-def',   sh:'bay-sh',   bz:'bay-bz',   bzs:'bay-bzs',   rz:'bay-rz',   rzs:'bay-rzs',   mz:'bay-mz',   mzs:'bay-mzs'   }
+};
+
+function applyTheme(t) {
+  document.body.className = 't-' + t;
+  currentTheme = t;
+}
+
+function selectTheme(t) {
+  applyTheme(t);
+  ['narra','night','bay'].forEach(function(k){
+    document.getElementById('tc-'+k).classList.toggle('selected', k===t);
+  });
+}
+
+function buildMiniBoard(id, theme) {
+  var el = document.getElementById(id); if(!el) return;
+  el.innerHTML = '';
+  var tk = THEMES[theme];
+  for (var r=0;r<8;r++) for (var c=0;c<9;c++) {
+    var d = document.createElement('div');
+    var shade = (r+c)%2===1;
+    var cls;
+    if (r<=2)      cls = shade ? tk.bzs : tk.bz;
+    else if (r>=5) cls = shade ? tk.rzs : tk.rz;
+    else           cls = shade ? tk.mzs : tk.mz;
+    d.className = 'mb-cell ' + cls;
+    el.appendChild(d);
+  }
+}
+
+function buildMiniBoardAll() {
+  buildMiniBoard('mb-narra','narra');
+  buildMiniBoard('mb-night','night');
+  buildMiniBoard('mb-bay','bay');
+}
+
+// ============================================================
+//  SETUP
+// ============================================================
+function freshDefs() { return DEFS.map(function(d){return Object.assign({},d);}); }
+function shuffle(a) { var b=[].concat(a); for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;} return b; }
+function makeGrid() { return shuffle(freshDefs().concat([null,null,null,null,null,null])); }
+
+function buildSetupUI() {
+  var wrap=document.getElementById('setup-wrap'); wrap.innerHTML='';
+  var grid=document.createElement('div');
+  grid.style.cssText='display:grid;grid-template-columns:repeat(9,var(--cell-w));grid-template-rows:repeat(3,var(--cell-h));gap:var(--gap);background:#0d0a05;border:2px solid var(--border);border-radius:6px;padding:var(--gap);';
+  setupSel=null;
+  var pc=setupPhase===0?'rp':'bp';
+  for (var i=0;i<27;i++) {
+    (function(idx){
+      var cell=document.createElement('div'); cell.className='cell';
+      if((Math.floor(idx/9)+(idx%9))%2===1) cell.classList.add('sh');
+      var def=setupGrid[idx];
+      if(def){var p=document.createElement('div');p.className='piece '+pc;p.innerHTML=pieceHTML(def);cell.appendChild(p);}
+      cell.addEventListener('click',function(){onSetupCell(idx);});
+      grid.appendChild(cell);
+    })(i);
+  }
+  wrap.appendChild(grid);
+  updSetupCount();
+}
+
+function onSetupCell(i) {
+  var grid=document.getElementById('setup-wrap').children[0];
+  if (setupSel===null) {
+    if(!setupGrid[i]) return;
+    setupSel=i; grid.children[i].classList.add('sel'); return;
+  }
+  if(setupSel===i){ grid.children[i].classList.remove('sel'); setupSel=null; return; }
+  var t=setupGrid[setupSel]; setupGrid[setupSel]=setupGrid[i]; setupGrid[i]=t;
+  setupSel=null; buildSetupUI();
+}
+
+function rndSetup() { setupGrid=makeGrid(); buildSetupUI(); }
+function updSetupCount() {
+  var n=setupGrid.filter(Boolean).length;
+  document.getElementById('pc').textContent=n;
+  document.getElementById('ec').textContent=27-n;
+}
+
+function confirmSetup() {
+  setupBoards[setupPhase===0?'red':'blue']=[].concat(setupGrid);
+  if(setupPhase===0 && mode==='pvp'){
+    setupPhase=1;
+    document.getElementById('setup-title').textContent='🔵 Blue Player Setup';
+    setupGrid=makeGrid(); buildSetupUI();
+  } else {
+    if(mode==='ai') setupBoards.blue=makeGrid();
+    launchGame();
+  }
+}
+
+function launchGame() {
+  applyTheme(currentTheme);
+  board=[];
+  for(var r=0;r<ROWS;r++){board.push([]);for(var c=0;c<COLS;c++)board[r].push(null);}
+  setupBoards.red.forEach(function(def,i){if(!def)return;board[5+Math.floor(i/9)][i%9]={def:def,player:'red'};});
+  setupBoards.blue.forEach(function(def,i){if(!def)return;board[Math.floor(i/9)][i%9]={def:def,player:'blue'};});
+  cur='red'; sel=null; vms=[]; over=false; aiTimer=null;
+  document.getElementById('sur-btn').style.display='';
+  document.getElementById('pass-btn').style.display='none';
+  document.getElementById('play-again-btn').style.display='none';
+  document.getElementById('ai-bar-wrap').classList.remove('show');
+  showScreen('game-screen');
+  updHdr(); render();
+  setSt('Select a piece to move');
+}
+
+// ============================================================
+//  HELPERS
+// ============================================================
+function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');window.scrollTo(0,0);if(id==='game-screen'){setTimeout(autoScale,50);}}
+function startGame(m){
+  mode=m;
+  buildMiniBoardAll();
+  showScreen('theme-screen');
+}
+function goFromTheme(){
+  setupPhase=0;
+  document.getElementById('setup-title').textContent='🔴 Red Player Setup';
+  setupGrid=makeGrid();buildSetupUI();showScreen('setup-screen');
+}
+function setSt(t){var b=document.getElementById('status');b.textContent=t;b.className='';}
+function surrender(){if(!over)endGame(cur==='red'?'blue':'red');}
+function goMenu(){
+  showConfirm('Return to main menu?', function(){
+    if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}
+    document.getElementById('handover-screen').classList.remove('show','red-turn','blue-turn');
+    showScreen('title-screen');
+  });
+}
+
+function showConfirm(msg, yesFn) {
+  document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-modal').classList.add('show');
+  document.getElementById('confirm-yes-btn').onclick = function() {
+    closeConfirm();
+    yesFn();
+  };
+}
+
+function closeConfirm() {
+  document.getElementById('confirm-modal').classList.remove('show');
+}
+function playAgain(){
+  document.getElementById('play-again-btn').style.display='none';
+  setupPhase=0;
+  document.getElementById('setup-title').textContent='🔴 Red Player Setup';
+  setupGrid=makeGrid(); buildSetupUI(); showScreen('setup-screen');
+}
+
+// ============================================================
+//  SOUND ENGINE (Web Audio API — no files needed)
+// ============================================================
+var audioCtx = null;
+function getCtx() {
+  if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){} }
+  return audioCtx;
+}
+function playSound(type) {
+  var ctx = getCtx(); if (!ctx) return;
+  var o = ctx.createOscillator();
+  var g = ctx.createGain();
+  o.connect(g); g.connect(ctx.destination);
+  var t = ctx.currentTime;
+  if (type==='move') {
+    o.frequency.setValueAtTime(440, t);
+    o.frequency.exponentialRampToValueAtTime(600, t+0.08);
+    g.gain.setValueAtTime(0.15, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t+0.1);
+    o.start(t); o.stop(t+0.1);
+  } else if (type==='battle') {
+    o.type='sawtooth';
+    o.frequency.setValueAtTime(220, t);
+    o.frequency.exponentialRampToValueAtTime(110, t+0.25);
+    g.gain.setValueAtTime(0.2, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t+0.3);
+    o.start(t); o.stop(t+0.3);
+  } else if (type==='win') {
+    // Fanfare: three rising tones
+    [0, 0.18, 0.36].forEach(function(delay, i) {
+      var o2=ctx.createOscillator(), g2=ctx.createGain();
+      o2.connect(g2); g2.connect(ctx.destination);
+      var freq = [523, 659, 784][i];
+      o2.frequency.setValueAtTime(freq, t+delay);
+      g2.gain.setValueAtTime(0.2, t+delay);
+      g2.gain.exponentialRampToValueAtTime(0.001, t+delay+0.3);
+      o2.start(t+delay); o2.stop(t+delay+0.3);
+    });
+  }
+}
+
+</script>
+
+<script>
+
+// ============================================================
+//  AUTO-SCALE BOARD TO FIT ANY SCREEN SIZE
+// ============================================================
+function autoScale() {
+  var wrap = document.getElementById('board-scale-wrap');
+  var board = document.getElementById('board');
+  if (!wrap || !board) return;
+
+  // Reset scale first to measure natural board width
+  wrap.style.transform = 'scale(1)';
+  wrap.style.marginBottom = '0px';
+
+  var boardW = board.offsetWidth;   // natural board width in px
+  var boardH = board.offsetHeight;  // natural board height in px
+  var screenW = window.innerWidth;
+  var screenH = window.innerHeight;
+
+  // Available width with small side padding
+  var availW = screenW - 16;
+  var availH = screenH * 0.65; // don't let board take more than 65% of screen height
+
+  // Calculate scale to fit width, capped so it never exceeds natural size
+  var scaleW = availW / boardW;
+  var scaleH = availH / boardH;
+  var scale = Math.min(scaleW, scaleH, 1.0); // never scale UP, only down
+  scale = Math.max(scale, 0.4); // never shrink below 40%
+
+  // Apply scale from top-center
+  wrap.style.transform = 'scale(' + scale + ')';
+  wrap.style.transformOrigin = 'top center';
+
+  // Compensate for the space the scaled board now leaves
+  // (scaled element still occupies original space in flow)
+  var scaledH = boardH * scale;
+  var savedH = boardH - scaledH;
+  wrap.style.marginBottom = '-' + Math.round(savedH) + 'px';
+}
+
+// Run on load, screen resize, and orientation change
+window.addEventListener('resize', autoScale);
+window.addEventListener('orientationchange', function(){ setTimeout(autoScale, 200); });
+
+// © 2026 JMBio032026. All Rights Reserved.
+// Game of the Generals — Digital Adaptation (Salpakan)
+// Unauthorized copying or distribution is strictly prohibited.
+
+// ── iPad / iOS touch fix ──────────────────────────────────────────────────
+// iOS Safari requires cursor:pointer OR this trick to fire click on non-button elements
+document.addEventListener('touchstart', function(){}, {passive: true});
+document.addEventListener('click', function(){}, false);
+
+// 300ms delay handled by touch-action:manipulation in CSS
+// ─────────────────────────────────────────────────────────────────────────
+
+
+if ('serviceWorker' in navigator) {
+  var swCode = `
+    const CACHE = 'salpakan-v1';
+    self.addEventListener('install', e => {
+      e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', './game-of-generals-mobile.html'])));
+    });
+    self.addEventListener('fetch', e => {
+      e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+    });
+  `;
+  var blob = new Blob([swCode], {type: 'application/javascript'});
+  var swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).catch(function(){});
+}
+</script>
+
+</body>
+</html>
