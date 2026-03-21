@@ -32,6 +32,51 @@
   #game-screen.active { min-height: unset; }
   .screen.active { display: flex; }
 
+
+  /* PASSWORD SCREEN */
+  #pwd-screen {
+    position: fixed; inset: 0; z-index: 999;
+    background: #1a1208;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 20px; padding: 40px 24px;
+  }
+  #pwd-screen .pwd-logo { text-align: center; }
+  #pwd-screen .pwd-logo h1 { font-size: 1.8rem; color: var(--gold); letter-spacing: 2px; text-shadow: 0 0 20px rgba(212,168,67,.5); }
+  #pwd-screen .pwd-logo p { color: var(--muted); font-size: .85rem; font-style: italic; margin-top: 4px; }
+  #pwd-screen .stars { color: var(--gold); font-size: 1.2rem; letter-spacing: 4px; text-align: center; }
+  #pwd-label { color: var(--muted); font-size: .88rem; text-align: center; }
+  #pwd-input {
+    background: #2a1f0e; border: 1px solid var(--border);
+    border-radius: 8px; padding: 14px 18px;
+    color: var(--text); font-size: 1.1rem; font-family: Georgia, serif;
+    text-align: center; letter-spacing: 3px;
+    width: 100%; max-width: 280px; outline: none;
+    -webkit-appearance: none;
+  }
+  #pwd-input:focus { border-color: var(--gold); }
+  #pwd-input.shake {
+    animation: shake 0.4s ease;
+    border-color: var(--red);
+  }
+  #pwd-error { color: #e74c3c; font-size: .82rem; text-align: center; min-height: 20px; }
+  #pwd-btn {
+    background: linear-gradient(135deg, var(--gold), #b8882a);
+    color: #1a1208; border: none; padding: 14px 48px;
+    border-radius: 8px; font-size: 1rem; font-weight: bold;
+    font-family: Georgia, serif; cursor: pointer; min-height: 48px;
+    touch-action: manipulation; width: 100%; max-width: 280px;
+  }
+  #pwd-btn:active { opacity: .85; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%      { transform: translateX(-8px); }
+    40%      { transform: translateX(8px); }
+    60%      { transform: translateX(-6px); }
+    80%      { transform: translateX(6px); }
+  }
+  #pwd-copy { color: var(--border); font-size: .65rem; text-align: center; margin-top: 10px; }
+
   /* TITLE */
   #title-screen { justify-content: center; gap: 18px; background: radial-gradient(ellipse at 50% 30%, #3d2a0a, #1a1208 70%); }
   .logo h1 { font-size: 2rem; color: var(--gold); text-shadow: 0 0 20px rgba(212,168,67,.5); letter-spacing: 2px; text-align: center; }
@@ -292,6 +337,23 @@
 </head>
 <body>
 
+<!-- PASSWORD SCREEN -->
+<div id="pwd-screen" style="position:fixed;inset:0;z-index:999;background:#1a1208;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:40px 24px;">
+  <div class="stars">★ ★ ★ ★ ★</div>
+  <div class="pwd-logo">
+    <h1>GAME OF THE<br>GENERALS</h1>
+    <p>Ang Larong Heneral · Salpakan</p>
+  </div>
+  <div id="pwd-label" style="color:var(--muted);font-size:.88rem;text-align:center;">🔒 Enter password to play</div>
+  <input id="pwd-input" type="password" placeholder="••••" maxlength="20"
+    onkeydown="if(event.key==='Enter')checkPwd()"
+    autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+    style="background:#2a1f0e;border:1px solid var(--border);border-radius:8px;padding:14px 18px;color:var(--text);font-size:1.1rem;font-family:Georgia,serif;text-align:center;letter-spacing:3px;width:100%;max-width:280px;outline:none;-webkit-appearance:none;"/>
+  <div id="pwd-error" style="color:#e74c3c;font-size:.82rem;text-align:center;min-height:20px;"></div>
+  <button id="pwd-btn" onclick="checkPwd()" style="background:linear-gradient(135deg,var(--gold),#b8882a);color:#1a1208;border:none;padding:14px 48px;border-radius:8px;font-size:1rem;font-weight:bold;font-family:Georgia,serif;cursor:pointer;min-height:48px;touch-action:manipulation;width:100%;max-width:280px;">▶ Enter</button>
+  <div style="color:var(--border);font-size:.65rem;text-align:center;margin-top:10px;">© 2026 JMBio032026 · All Rights Reserved</div>
+</div>
+
 <div class="overlay" id="overlay" onclick="dismissBattle()" style="cursor:pointer"></div>
 <div id="battle-popup" onclick="dismissBattle()" style="cursor:pointer">
   <h3>⚔️ Challenge!</h3>
@@ -464,6 +526,33 @@
 
 
 <script>
+
+
+// ============================================================
+//  PASSWORD PROTECTION
+// ============================================================
+function checkPwd() {
+  var input = document.getElementById('pwd-input');
+  var error = document.getElementById('pwd-error');
+  var val = input.value;
+  // Simple hash check — password is "fReE"
+  if (val === atob('ZlJlRQ==')) {
+    document.getElementById('pwd-screen').style.display = 'none';
+    input.value = '';
+    error.textContent = '';
+  } else {
+    error.textContent = '❌ Incorrect password. Please try again.';
+    input.classList.remove('shake');
+    void input.offsetWidth; // trigger reflow for animation restart
+    input.classList.add('shake');
+    input.value = '';
+    setTimeout(function(){ input.classList.remove('shake'); }, 500);
+  }
+}
+// Auto-focus password input on load
+window.addEventListener('DOMContentLoaded', function(){
+  setTimeout(function(){ var i=document.getElementById('pwd-input'); if(i) i.focus(); }, 300);
+});
 
 // ============================================================
 //  AUTO-SCALE BOARD TO FIT ANY SCREEN SIZE
@@ -1165,6 +1254,33 @@ function playSound(type) {
 </script>
 
 <script>
+
+
+// ============================================================
+//  PASSWORD PROTECTION
+// ============================================================
+function checkPwd() {
+  var input = document.getElementById('pwd-input');
+  var error = document.getElementById('pwd-error');
+  var val = input.value;
+  // Simple hash check — password is "fReE"
+  if (val === atob('ZlJlRQ==')) {
+    document.getElementById('pwd-screen').style.display = 'none';
+    input.value = '';
+    error.textContent = '';
+  } else {
+    error.textContent = '❌ Incorrect password. Please try again.';
+    input.classList.remove('shake');
+    void input.offsetWidth; // trigger reflow for animation restart
+    input.classList.add('shake');
+    input.value = '';
+    setTimeout(function(){ input.classList.remove('shake'); }, 500);
+  }
+}
+// Auto-focus password input on load
+window.addEventListener('DOMContentLoaded', function(){
+  setTimeout(function(){ var i=document.getElementById('pwd-input'); if(i) i.focus(); }, 300);
+});
 
 // ============================================================
 //  AUTO-SCALE BOARD TO FIT ANY SCREEN SIZE
